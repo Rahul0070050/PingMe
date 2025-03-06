@@ -1,32 +1,38 @@
-import Image from "next/image";
 import React from "react";
-import profile from "../public/profile.jpeg";
-import { EllipsisVertical, Phone, Video } from "lucide-react";
+import ChatHeader from "./ChatHeader";
+import Message from "./Message";
 
+const messages = [
+  { message: "Hey, how are you?", sender: 1, date: "2025-03-06T10:00:00Z" },
+  {
+    message: "I'm good! How about you?",
+    sender: 2,
+    date: "2025-03-06T10:01:00Z",
+  },
+  {
+    message: "Doing well, just working on a project.",
+    sender: 1,
+    date: "2025-03-06T10:02:00Z",
+  },
+  {
+    message: "Nice! What kind of project?",
+    sender: 2,
+    date: "2025-03-06T10:03:00Z",
+  },
+  {
+    message: "A video calling website using Next.js!",
+    sender: 1,
+    date: "2025-03-06T10:04:00Z",
+  },
+];
 const ChatWindow = () => {
   return (
     <div>
-      <div className="flex items-center justify-between p-2 px-4 border-b">
-        <div className="flex items-center gap-4 p-2 hover:bg-slate-100 cursor-pointer">
-          <Image
-            className="rounded-full"
-            width={45}
-            height={45}
-            src={profile}
-            alt="profile"
-          />
-          <div className="leading-5">
-            <h5 className="font-medium">Rahul O R</h5>
-            <span className="text-slate-500 text-sm">
-              last seen at 14:11 PM
-            </span>
-          </div>
-        </div>
-        <div className="flex gap-3 text-gray-400">
-          <Phone className="w-9 h-9 p-2" />
-          <Video className="w-9 h-9 p-2" />
-          <EllipsisVertical className="w-9 h-9 p-2" />
-        </div>
+      <ChatHeader />
+      <div className={`flex flex-col px-4`}>
+        {messages.map((message, index) => (
+          <Message key={index} message={message} />
+        ))}
       </div>
     </div>
   );
