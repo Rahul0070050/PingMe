@@ -31,41 +31,41 @@ const SideBar = () => {
             {/* <span className="text-slate-500 text-sm">last seen at 14:11 PM</span> */}
           </div>
         </div>
-        <div className="flex gap-3 text-gray-400">
-          <Search className="w-9 h-9 p-2" />
-          <Bell className="w-9 h-9 p-2" />
-          <Ellipsis className="w-9 h-9 p-2" />
+        <div className="flex gap-3 text-gray-500">
+          <Search className="w-9 h-9 p-2 cursor-pointer hover:text-slate-600 transition-all" />
+          <Bell className="w-9 h-9 p-2 cursor-pointer hover:text-slate-600 transition-all" />
+          <Ellipsis className="w-9 h-9 p-2 cursor-pointer hover:text-slate-600 transition-all" />
         </div>
       </div>
       <div className="flex justify-between px-4 py-3 border-b">
         <span
           className={cn(
-            "flex flex-col gap-1 items-center text-sm text-slate-500 cursor-pointer hover:text-blue-400 transition-all",
+            "flex flex-col gap-1 items-center text-sm font-medium text-slate-500 cursor-pointer hover:text-blue-400 transition-all",
             selectedTab === "messages" ? "text-blue-600" : ""
           )}
           onClick={() => setSelectedTab("messages")}
         >
-          <MessageSquareText className="w-5 h-5" />
+          <MessageSquareText className="w-6 h-6" />
           MESSAGES
         </span>
         <span
           className={cn(
-            "flex flex-col gap-1 items-center text-sm text-slate-500 cursor-pointer hover:text-blue-400 transition-all",
+            "flex flex-col gap-1 items-center text-sm font-medium text-slate-500 cursor-pointer hover:text-blue-400 transition-all",
             selectedTab === "calls" ? "text-blue-600" : ""
           )}
           onClick={() => setSelectedTab("calls")}
         >
-          <Phone className="w-5 h-5" />
+          <Phone className="w-6 h-6" />
           CALLS
         </span>
         <span
           className={cn(
-            "flex flex-col gap-1 items-center text-sm text-slate-500 cursor-pointer hover:text-blue-400 transition-all",
+            "flex flex-col gap-1 items-center text-sm font-medium text-slate-500 cursor-pointer hover:text-blue-400 transition-all",
             selectedTab === "contacts" ? "text-blue-600" : ""
           )}
           onClick={() => setSelectedTab("contacts")}
         >
-          <SquareUser className="w-5 h-5" />
+          <SquareUser className="w-6 h-6" />
           CONTACTS
         </span>
       </div>

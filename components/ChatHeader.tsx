@@ -3,10 +3,12 @@ import React from "react";
 import profile from "../public/profile.jpeg";
 import { EllipsisVertical, Phone, Video } from "lucide-react";
 import Image from "next/image";
-import { useAppSelector } from "@/store/hook";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { toggleUserInfo } from "@/store/userSlice";
 
 const ChatHeader = () => {
-  const { id, avatar, username } = useAppSelector((state) => state.user);
+  const { avatar, username } = useAppSelector((state) => state.user);
+  const dispatch = useAppDispatch();
   return (
     <div className="flex items-center justify-between p-2 px-4 border-b">
       <div className="flex items-center gap-4 p-2 cursor-pointer">
@@ -23,15 +25,15 @@ const ChatHeader = () => {
             {username && username[0].toUpperCase()}
           </div>
         )}
-        <div className="leading-5">
-          <h5 className="font-medium">{username}</h5>
+        <div className="leading-5" onClick={() => dispatch(toggleUserInfo())}>
+          <h5 className="font-medium">Alice</h5>
           <span className="text-slate-500 text-sm">last seen at 14:11 PM</span>
         </div>
       </div>
-      <div className="flex gap-3 text-gray-400">
-        <Phone className="w-9 h-9 p-2" />
-        <Video className="w-9 h-9 p-2" />
-        <EllipsisVertical className="w-9 h-9 p-2" />
+      <div className="flex gap-3 text-gray-500 mr-5">
+        <Phone className="w-8 h-8 p-1 cursor-pointer hover:text-slate-600 transition-all" />
+        <Video className="w-8 h-8 p-1 cursor-pointer hover:text-slate-600 transition-all" />
+        <EllipsisVertical className="w-8 h-8 p-1 cursor-pointer hover:text-slate-600 transition-all" />
       </div>
     </div>
   );

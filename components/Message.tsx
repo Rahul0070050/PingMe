@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hook";
 import React from "react";
+import moment from "moment";
 
 type PROPS = {
   message: {
@@ -34,7 +35,7 @@ const Message = ({ message }: PROPS) => {
           id == message.sender ? "text-slate-100 ml-auto" : "text-gray-900"
         )}
       >
-        {new Date(message.date).toLocaleDateString()}
+        {moment(message.date).format("hh:mm A")}
       </span>
     </div>
   );

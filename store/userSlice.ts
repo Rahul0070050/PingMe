@@ -5,12 +5,16 @@ import { StaticImageData } from "next/image";
 type INITIALSTATE = {
   id?: number;
   username?: string;
+  bio: string;
   avatar?: StaticImageData;
+  openUserInfo?: boolean;
 };
 const initialState: INITIALSTATE = {
   id: 1,
   username: "Rahul O R",
+  bio: "web developer",
   avatar: profile,
+  openUserInfo: false,
 };
 const userSlice = createSlice({
   name: "user",
@@ -20,11 +24,19 @@ const userSlice = createSlice({
       state = action.payload;
     },
     removeUser: (state) => {
-      state = {};
+      state = {
+        id: -1,
+        username: "",
+        bio: "",
+        openUserInfo: false,
+      };
+    },
+    toggleUserInfo: (state) => {
+      state.openUserInfo = !state.openUserInfo;
     },
   },
 });
 
-export const { setUser, removeUser } = userSlice.actions;
+export const { setUser, removeUser, toggleUserInfo } = userSlice.actions;
 
 export default userSlice;
