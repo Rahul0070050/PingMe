@@ -19,6 +19,8 @@ import ChatList from "./ChatList";
 import profile from "../public/profile.jpeg";
 import { toggleSettings } from "@/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
+import CallHistory from "./CallHistory";
+import MyContacts from "./MyContacts";
 
 const SideBar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -149,7 +151,9 @@ const SideBar: React.FC = () => {
         ))}
       </div>
       <div className="flex-1 overflow-y-auto">
-        <ChatList />
+        {selectedTab === "messages" && <ChatList />}
+        {selectedTab === "calls" && <CallHistory />}
+        {selectedTab === "contacts" && <MyContacts />}
       </div>
     </div>
   );
