@@ -1,7 +1,7 @@
 "use client";
+
 import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { toggleUserInfo } from "@/store/userSlice";
-import profile from "../public/profile.jpeg";
+import { toggleUserInfo, toggleUserSettings } from "@/store/userSlice";
 import {
   Camera,
   ChevronRight,
@@ -10,7 +10,6 @@ import {
   Globe,
   Linkedin,
   Mail,
-  MoveRight,
   Settings,
   Smartphone,
   Twitter,
@@ -19,79 +18,123 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import React from "react";
+import profile from "../public/profile.jpeg";
 
-const UserProfile = () => {
+const UserProfile: React.FC = () => {
   const dispatch = useAppDispatch();
   const { avatar, username, bio } = useAppSelector((state) => state.user);
+
+  const socialIcons = [
+    { icon: Facebook, label: "Facebook" },
+    { icon: Linkedin, label: "LinkedIn" },
+    { icon: Twitter, label: "Twitter" },
+    { icon: Youtube, label: "YouTube" },
+  ];
+
+  const contactInfo = [
+    { icon: Smartphone, text: "+91 588734323", label: "Phone number" },
+    { icon: Globe, text: "sample.web.com", label: "Website" },
+    { icon: Mail, text: "sample@email.com", label: "Email" },
+  ];
+
+  const handleClose = () => {
+    dispatch(toggleUserInfo());
+  };
+
   return (
-    <div className="flex flex-col gap-3 border-l">
-      <div className="p-4 py-6 text-lg font-medium flex justify-between border-b">
-        <h2>Contact Info</h2>
-        <X
-          className="text-slate-500 cursor-pointer hover:text-slate-600 transition-all"
-          onClick={() => dispatch(toggleUserInfo())}
-        />
+    <div className="flex flex-col h-full bg-white border-l py-4 border-gray-200 shadow-md">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+        <h2 className="text-lg font-semibold text-gray-900">Contact Info</h2>
+        <button
+          onClick={handleClose}
+          className="p-1 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
+            transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          aria-label="Close profile"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
-      <div className="flex flex-col justify-center items-center py-5">
-        {avatar && (
+      <div className="flex flex-col items-center py-6 px-4">
+        {avatar ? (
           <Image
-            className="w-32 rounded-full"
-            width={100}
+            className="w-24 h-24 rounded-full border border-gray-200 shadow-sm object-cover"
+            width={96}
+            height={96}
             src={avatar}
-            alt="profile"
+            alt={`${username || "User"}'s profile picture`}
+            priority
           />
-        )}
-        <h3 className="text-xl font-medium mt-3 leading-5">{username}</h3>
-        <p className="text-slate-500">{bio}</p>
-        <div className="flex gap-3 mt-2">
-          <Facebook className="text-slate-500 w-5 h-5 cursor-pointer hover:text-slate-600 transition-all" />
-          <Linkedin className="text-slate-500 w-5 h-5 cursor-pointer hover:text-slate-600 transition-all" />
-          <Twitter className="text-slate-500 w-5 h-5 cursor-pointer hover:text-slate-600 transition-all" />
-          <Youtube className="text-slate-500 w-5 h-5 cursor-pointer hover:text-slate-600 transition-all" />
-        </div>
-      </div>
-      <div className="px-6 flex flex-col gap-4">
-        <div className="flex gap-2">
-          <Smartphone className="text-slate-500 w-5 h-5" />
-          <span className="text-slate-700 text-sm">+91 588734323</span>
-        </div>
-        <div className="flex gap-2">
-          <Globe className="text-slate-500 w-5 h-5" />
-          <span className="text-slate-700 text-sm">sample.web.com</span>
-        </div>
-        <div className="flex gap-2">
-          <Mail className="text-slate-500 w-5 h-5" />
-          <span className="text-slate-700 text-sm">sample@email.com</span>
-        </div>
-      </div>
-      <div className="px-3 flex flex-col gap-3 pt-7">
-        <div className="flex flex-col gap-3 text-slate-900 text-base">
-          <div className="flex gap-3 text-slate-900 text-base">
-            <Camera className="text-slate-500" />
-            <h2 className="font-medium">Photos & Media</h2>
+        ) : (
+          <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold text-3xl shadow-sm">
+            {username ? username[0].toUpperCase() : "?"}
           </div>
-          <div className="flex items-center gap-1">
-            {[profile, profile, profile].map((iamge, index) => {
-              return <Image key={index} width={70} src={iamge} alt="media" />;
-            })}
-            <div className="h-[71px] w-[71px] bg-slate-300 flex items-center justify-center relative">
-              <ChevronRight className=" z-10 w-14 h-14 text-black/60 absolute" />
+        )}
+        <h3 className="text-xl font-semibold text-gray-900 mt-3">
+          {username || "Unknown User"}
+        </h3>
+        <p className="text-sm text-gray-500 text-center mt-1">
+          {bio || "No bio available"}
+        </p>
+        <div className="flex gap-3 mt-4">
+          {socialIcons.map(({ icon: Icon, label }) => (
+            <button
+              key={label}
+              className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
+                transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              aria-label={`Visit ${label}`}
+            >
+              <Icon className="w-5 h-5" />
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        {contactInfo.map(({ icon: Icon, text, label }) => (
+          <div key={text} className="flex items-center gap-3 py-2">
+            <Icon className="w-5 h-5 text-gray-500" />
+            <span className="text-sm text-gray-700">{text}</span>
+          </div>
+        ))}
+      </div>
+      <div className="flex-1 px-6 py-4 space-y-6">
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <Camera className="w-5 h-5 text-gray-500" />
+            <h3 className="font-medium text-gray-900">Photos & Media</h3>
+          </div>
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+            {[profile, profile, profile].map((image, index) => (
               <Image
-                className="blur-[5px] z-0"
-                width={70}
-                src={profile}
-                alt="media"
+                key={index}
+                className="w-16 h-16 rounded-md object-cover shadow-sm"
+                width={64}
+                height={64}
+                src={image}
+                alt={`Media ${index + 1}`}
               />
+            ))}
+            <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center relative cursor-pointer hover:bg-gray-300 transition-all duration-200">
+              <Image
+                className="w-full h-full object-cover blur-sm absolute"
+                width={64}
+                height={64}
+                src={profile}
+                alt="More media preview"
+              />
+              <ChevronRight className="w-8 h-8 text-gray-700 z-10" />
             </div>
           </div>
         </div>
-        <div className="flex gap-3 text-slate-900 text-base">
-          <Dock className="text-slate-500" />
-          <h2 className="font-medium">Documents</h2>
+        <div className="flex items-center gap-3">
+          <Dock className="w-5 h-5 text-gray-500" />
+          <h3 className="font-medium text-gray-900">Documents</h3>
         </div>
-        <div className="flex gap-3 text-slate-900 text-base">
-          <Settings className="text-slate-500" />
-          <h2 className="font-medium">Settings</h2>
+        <div
+          className="flex items-center gap-3"
+          onClick={() => dispatch(toggleUserSettings())}
+        >
+          <Settings className="w-5 h-5 text-gray-500" />
+          <h3 className="font-medium text-gray-900">Settings</h3>
         </div>
       </div>
     </div>

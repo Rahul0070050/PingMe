@@ -33,11 +33,71 @@ const chathistory = [
     message: "Haha, that was hilarious! 😂",
     timestamp: "2025-03-07T10:15:00Z",
   },
+  {
+    user_id: "1",
+    name: "Alice",
+    message: "Hey, are we still on for the meeting?",
+    timestamp: "2025-03-07T14:05:30Z",
+  },
+  {
+    user_id: "2",
+    name: "Bob",
+    message: "Sure, I'll send the files soon.",
+    timestamp: "2025-03-07T13:45:10Z",
+  },
+  {
+    user_id: "3",
+    name: "Charlie",
+    message: "Great job on the project! 🎉",
+    timestamp: "2025-03-07T12:55:20Z",
+  },
+  {
+    user_id: "4",
+    name: "David",
+    message: "Let's catch up later.",
+    timestamp: "2025-03-07T11:30:45Z",
+  },
+  {
+    user_id: "5",
+    name: "Eve",
+    message: "Haha, that was hilarious! 😂",
+    timestamp: "2025-03-07T10:15:00Z",
+  },
+  {
+    user_id: "1",
+    name: "Alice",
+    message: "Hey, are we still on for the meeting?",
+    timestamp: "2025-03-07T14:05:30Z",
+  },
+  {
+    user_id: "2",
+    name: "Bob",
+    message: "Sure, I'll send the files soon.",
+    timestamp: "2025-03-07T13:45:10Z",
+  },
+  {
+    user_id: "3",
+    name: "Charlie",
+    message: "Great job on the project! 🎉",
+    timestamp: "2025-03-07T12:55:20Z",
+  },
+  {
+    user_id: "4",
+    name: "David",
+    message: "Let's catch up later.",
+    timestamp: "2025-03-07T11:30:45Z",
+  },
+  {
+    user_id: "5",
+    name: "Eve",
+    message: "Haha, that was hilarious! 😂",
+    timestamp: "2025-03-07T10:15:00Z",
+  },
 ];
 
 const ChatList = () => {
   return (
-    <div className="p-3">
+    <div className="p-3 h-[calc(100vh-10vh-73px)] overflow-auto">
       {chathistory.map((user) => (
         <div className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer">
           <Image
