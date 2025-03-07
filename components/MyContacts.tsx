@@ -1,6 +1,9 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 import profile from "../public/profile.jpeg";
+import { closeSideBar } from "@/store/userSlice";
+import { useAppDispatch } from "@/store/hook";
 
 const users = [
   {
@@ -56,10 +59,14 @@ const users = [
 ];
 
 const MyContacts = () => {
+  const dispatch = useAppDispatch();
   return (
     <div className="p-3 h-[calc(100vh-10vh-73px)] overflow-auto">
       {users.map((user) => (
-        <div className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer">
+        <div
+          className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer"
+          onClick={() => dispatch(closeSideBar())}
+        >
           <Image
             className="rounded-full"
             width={45}

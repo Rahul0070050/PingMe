@@ -12,6 +12,8 @@ interface UserState {
   openUserInfo: boolean;
   openUserSettings: boolean;
   openSettings: boolean;
+  openStartNewChat: boolean;
+  showSideBar: boolean;
 }
 
 const initialState: UserState = {
@@ -24,6 +26,8 @@ const initialState: UserState = {
   openUserInfo: false,
   openUserSettings: false,
   openSettings: false,
+  openStartNewChat: false,
+  showSideBar: false,
 };
 const userSlice = createSlice({
   name: "user",
@@ -42,17 +46,35 @@ const userSlice = createSlice({
         email: "",
         openUserInfo: false,
         openUserSettings: false,
+        openStartNewChat: false,
+        showSideBar: false,
       };
     },
     toggleUserInfo: (state) => {
       state.openUserInfo = !state.openUserInfo;
     },
     toggleUserSettings: (state) => {
+      state.openUserInfo = false;
+      state.openStartNewChat = false;
       state.openUserSettings = !state.openUserSettings;
-      state.openUserInfo = !state.openUserInfo;
     },
     toggleSettings: (state) => {
+      state.openStartNewChat = false;
+      state.openUserSettings = false;
+      state.showSideBar = !state.showSideBar;
       state.openSettings = !state.openSettings;
+    },
+    toggleStartANewChat: (state) => {
+      state.openSettings = false;
+      state.openUserSettings = false;
+      state.showSideBar = !state.showSideBar;
+      state.openStartNewChat = !state.openStartNewChat;
+    },
+    openSideBar: (state) => {
+      state.showSideBar = true;
+    },
+    closeSideBar: (state) => {
+      state.showSideBar = false;
     },
     updateUserField: (
       state,
@@ -72,6 +94,9 @@ export const {
   updateUserField,
   toggleUserSettings,
   toggleSettings,
+  toggleStartANewChat,
+  openSideBar,
+  closeSideBar,
 } = userSlice.actions;
 
 export default userSlice.reducer;

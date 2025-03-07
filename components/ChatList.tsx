@@ -1,6 +1,9 @@
+"use client";
 import Image from "next/image";
 import React from "react";
 import profile from "../public/profile.jpeg";
+import { useAppDispatch } from "@/store/hook";
+import { closeSideBar } from "@/store/userSlice";
 
 const chathistory = [
   {
@@ -96,10 +99,14 @@ const chathistory = [
 ];
 
 const ChatList = () => {
+  const dispatch = useAppDispatch();
   return (
-    <div className="p-3 h-[calc(100vh-10vh-73px)] overflow-auto">
+    <div className="p-3 h-[calc(100vh-10vh-73px)] max-sm:h-[calc(100vh-10vh-85px)] overflow-auto">
       {chathistory.map((user) => (
-        <div className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer">
+        <div
+          className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer"
+          onClick={() => dispatch(closeSideBar())}
+        >
           <Image
             className="rounded-full"
             width={45}

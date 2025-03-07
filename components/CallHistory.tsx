@@ -9,7 +9,8 @@ import {
   PhoneIncoming,
   PhoneOutgoing,
 } from "lucide-react";
-import { useAppSelector } from "@/store/hook";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { openSideBar } from "@/store/userSlice";
 
 // Call ID (Unique identifier)
 // Caller ID (User who initiated the call)
@@ -148,11 +149,15 @@ const callHistory = [
 ];
 
 const CallHistory = () => {
+  const dispatch = useAppDispatch();
   const id = useAppSelector((state) => state.user.id);
   return (
     <div className="p-3 h-[calc(100vh-10vh-73px)] overflow-auto">
       {callHistory.map((call) => (
-        <div className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer">
+        <div
+          className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer"
+          onClick={() => dispatch(openSideBar())}
+        >
           <Image
             className="rounded-full"
             width={45}

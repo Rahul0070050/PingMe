@@ -57,6 +57,40 @@ const messages: MessageData[] = [
     sender: 1,
     date: "2025-03-06T10:12:00Z",
   },
+  {
+    message:
+      "That's a solid tech stack! Are you handling authentication yourself?",
+    sender: 2,
+    date: "2025-03-06T10:07:00Z",
+  },
+  {
+    message:
+      "Nope, I'm using Clerk for authentication. It simplifies things a lot!",
+    sender: 1,
+    date: "2025-03-06T10:08:00Z",
+  },
+  {
+    message: "Clerk is great! Are you planning to add any extra features?",
+    sender: 2,
+    date: "2025-03-06T10:09:00Z",
+  },
+  {
+    message: "Yeah, I want to add meeting scheduling and recording features.",
+    sender: 1,
+    date: "2025-03-06T10:10:00Z",
+  },
+  {
+    message:
+      "That would make it super useful! Let me know if you need a tester. 😃",
+    sender: 2,
+    date: "2025-03-06T10:11:00Z",
+  },
+  {
+    message:
+      "Thanks! I'll definitely reach out once I have a beta version ready.",
+    sender: 1,
+    date: "2025-03-06T10:12:00Z",
+  },
 ];
 
 const ChatWindow: React.FC = () => {
@@ -64,7 +98,7 @@ const ChatWindow: React.FC = () => {
 
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: "smooth" });
+      scrollRef.current.scrollIntoView({ behavior: "auto" });
     }
   }, []);
 
@@ -86,8 +120,8 @@ const ChatWindow: React.FC = () => {
             No messages yet. Start the conversation!
           </div>
         )}
-        <div ref={scrollRef} />
       </div>
+      <div ref={scrollRef} />
       <div className="border-t border-gray-200 bg-white p-4">
         <SendMessage />
       </div>

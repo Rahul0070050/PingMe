@@ -17,14 +17,16 @@ import {
 } from "lucide-react";
 import ChatList from "./ChatList";
 import profile from "../public/profile.jpeg";
-import { toggleSettings } from "@/store/userSlice";
+import { toggleSettings, toggleStartANewChat } from "@/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import CallHistory from "./CallHistory";
 import MyContacts from "./MyContacts";
 
 const SideBar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { openSettings } = useAppSelector((state) => state.user);
+  const { openSettings, openStartNewChat } = useAppSelector(
+    (state) => state.user
+  );
   const [selectedTab, setSelectedTab] = useState<
     "messages" | "calls" | "contacts"
   >("messages");
@@ -57,7 +59,7 @@ const SideBar: React.FC = () => {
     {
       icon: MessageSquare,
       label: "New Chat",
-      action: () => console.log("Start New Chat"),
+      action: () => dispatch(toggleStartANewChat()),
     },
     // {
     //   icon: Settings,
