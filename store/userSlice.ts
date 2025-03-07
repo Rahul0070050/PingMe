@@ -8,8 +8,10 @@ interface UserState {
   bio: string;
   avatar: StaticImageData | string | null;
   email?: string;
+  phone?: string;
   openUserInfo: boolean;
   openUserSettings: boolean;
+  openSettings: boolean;
 }
 
 const initialState: UserState = {
@@ -18,8 +20,10 @@ const initialState: UserState = {
   bio: "Web Developer",
   avatar: profile,
   email: "rahul@example.com",
+  phone: "144536465",
   openUserInfo: false,
   openUserSettings: false,
+  openSettings: false,
 };
 const userSlice = createSlice({
   name: "user",
@@ -47,6 +51,9 @@ const userSlice = createSlice({
       state.openUserSettings = !state.openUserSettings;
       state.openUserInfo = !state.openUserInfo;
     },
+    toggleSettings: (state) => {
+      state.openSettings = !state.openSettings;
+    },
     updateUserField: (
       state,
       action: PayloadAction<{ field: keyof UserState; value: any }>
@@ -64,6 +71,7 @@ export const {
   toggleUserInfo,
   updateUserField,
   toggleUserSettings,
+  toggleSettings,
 } = userSlice.actions;
 
 export default userSlice.reducer;

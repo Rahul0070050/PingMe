@@ -1,21 +1,31 @@
+"use client";
+
+import React from "react";
+
 interface SubmitButtonProps {
   isSubmitting: boolean;
   label: string;
   loadingLabel: string;
+  disabled?: boolean; // Added explicit disabled prop
+  className?: string; // Optional: Added for styling flexibility
 }
 
 const SubmitButton: React.FC<SubmitButtonProps> = ({
   isSubmitting,
   label,
   loadingLabel,
+  disabled = false, // Default to false if not provided
+  className,
 }) => (
   <button
     type="submit"
-    disabled={isSubmitting}
+    disabled={isSubmitting || disabled} // Combine isSubmitting and disabled
     className={`w-full py-3 px-4 bg-indigo-600 text-white rounded-lg font-semibold
         shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 
         focus:ring-offset-2 transition-all duration-200 flex items-center justify-center
-        ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""}`}
+        ${isSubmitting || disabled ? "opacity-70 cursor-not-allowed" : ""} ${
+      className || ""
+    }`}
   >
     {isSubmitting ? (
       <>

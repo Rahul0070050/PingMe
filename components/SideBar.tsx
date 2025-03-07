@@ -1,20 +1,28 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
   Bell,
   Ellipsis,
+  LogOut,
+  MessageSquare,
   MessageSquareText,
   Phone,
   Search,
+  Settings,
   SquareUser,
+  User,
 } from "lucide-react";
 import ChatList from "./ChatList";
 import profile from "../public/profile.jpeg";
+import { toggleSettings } from "@/store/userSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
 
 const SideBar: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { openSettings } = useAppSelector((state) => state.user);
   const [selectedTab, setSelectedTab] = useState<
     "messages" | "calls" | "contacts"
   >("messages");
@@ -24,10 +32,45 @@ const SideBar: React.FC = () => {
     { id: "calls", icon: Phone, label: "Calls" },
     { id: "contacts", icon: SquareUser, label: "Contacts" },
   ];
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
+  const menuOptions = [
+    {
+      icon: User,
+      label: "My Profile",
+      action: () => !openSettings && dispatch(toggleSettings()),
+    },
+    {
+      icon: MessageSquare,
+      label: "New Chat",
+      action: () => console.log("Start New Chat"),
+    },
+    // {
+    //   icon: Settings,
+    //   label: "Settings",
+    //   action: () => openSettings && dispatch(toggleSettings()),
+    // },
+    { icon: LogOut, label: "Logout", action: () => console.log("Logout") },
+  ];
+
+  const handleMenuToggle = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
   return (
     <div className="flex flex-col h-full bg-white shadow-md">
-      <div className="flex items-center justify-between p-4 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+      <div className="flex items-center justify-between px-4 py-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white shadow-sm">
         <div className="flex items-center gap-3">
           <Image
             className="rounded-full border border-gray-200 shadow-sm"
@@ -41,7 +84,7 @@ const SideBar: React.FC = () => {
             <h5 className="font-semibold text-gray-900">Rahul O R</h5>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 relative">
           <button
             className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
               transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -56,13 +99,35 @@ const SideBar: React.FC = () => {
           >
             <Bell className="w-5 h-5" />
           </button>
-          <button
-            className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
-              transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            aria-label="More options"
-          >
-            <Ellipsis className="w-5 h-5" />
-          </button>
+          <div ref={menuRef} className="relative">
+            <button
+              onClick={handleMenuToggle}
+              className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
+                transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              aria-label="More options"
+              aria-expanded={isMenuOpen}
+            >
+              <Ellipsis className="w-5 h-5" />
+            </button>
+            {isMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                {menuOptions.map(({ icon: Icon, label, action }) => (
+                  <button
+                    key={label}
+                    onClick={() => {
+                      action();
+                      setIsMenuOpen(false); // Close menu after action
+                    }}
+                    className="flex items-center gap-3 w-full text-left px-4 py-2 text-gray-700 
+                      hover:bg-indigo-50 hover:text-indigo-600 transition-all duration-200"
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="text-sm">{label}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex justify-around py-3 border-b border-gray-200 bg-gray-50">

@@ -4,14 +4,13 @@ import ChatWindow from "@/components/ChatWindow";
 import SideBar from "@/components/SideBar";
 import UserProfile from "@/components/UserProfile";
 import UserSettings from "@/components/UserSettings";
+import Settings from "@/components/Settings";
 import { cn } from "@/lib/utils";
-import { useAppDispatch, useAppSelector } from "@/store/hook"; // Added useAppDispatch
-import { toggleUserInfo } from "@/store/userSlice"; // Assuming this action exists
-import { X } from "lucide-react";
+import { useAppSelector } from "@/store/hook";
 import React from "react";
 
 const ChatPage: React.FC = () => {
-  const { openUserInfo, openUserSettings } = useAppSelector(
+  const { openUserInfo, openUserSettings, openSettings } = useAppSelector(
     (state) => state.user
   );
 
@@ -21,21 +20,17 @@ const ChatPage: React.FC = () => {
         className="w-full max-w-7xl h-[calc(100vh-2rem)] grid grid-cols-12 bg-white border shadow-md rounded-lg 
           md:gap-0 gap-4 overflow-hidden max-md:h-screen"
       >
-        {/* Sidebar */}
         <div className="col-span-12 md:col-span-3 border-r h-full md:h-[calc(100vh-2rem)]">
           <SideBar />
         </div>
-
-        {/* Chat Window */}
         <div
           className={cn(
             "col-span-12 md:col-span-9 h-full md:h-[calc(100vh-2rem)] transition-all duration-300",
             (openUserInfo || openUserSettings) && "md:col-span-6"
           )}
         >
-          <ChatWindow />
+          {openSettings ? <Settings /> : <ChatWindow />}
         </div>
-
         {openUserInfo && (
           <div
             className="col-span-12 md:col-span-3 h-full md:h-[calc(100vh-2rem)] transition-all duration-300 
