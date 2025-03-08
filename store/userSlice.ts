@@ -27,7 +27,7 @@ const initialState: UserState = {
   openUserSettings: false,
   openSettings: false,
   openStartNewChat: false,
-  showSideBar: false,
+  showSideBar: true,
 };
 const userSlice = createSlice({
   name: "user",
@@ -47,7 +47,7 @@ const userSlice = createSlice({
         openUserInfo: false,
         openUserSettings: false,
         openStartNewChat: false,
-        showSideBar: false,
+        showSideBar: true,
       };
     },
     toggleUserInfo: (state) => {

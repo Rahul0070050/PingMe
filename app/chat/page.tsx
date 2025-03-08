@@ -28,7 +28,7 @@ const ChatPage: React.FC = () => {
         <div
           className={cn(
             "col-span-12 xl:col-span-3 md:col-span-5 border-r h-full md:h-[calc(100vh-2rem)]",
-            showSideBar ? "max-md:hidden" : ""
+            showSideBar ? "" : "max-md:hidden"
           )}
         >
           <SideBar />
@@ -38,7 +38,7 @@ const ChatPage: React.FC = () => {
             "col-span-12 xl:col-span-9 md:col-span-7 h-full md:h-[calc(100vh-2rem)] max-md:h-[calc(100vh)] transition-all duration-300",
             (openUserInfo || openUserSettings || openStartNewChat) &&
               "md:hidden xl:block xl:col-span-6 max-md:hidden",
-            showSideBar ? "" : "max-md:hidden"
+            showSideBar ? "max-md:hidden" : ""
           )}
         >
           {openSettings ? <Settings /> : <ChatWindow />}

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import React from "react";
 import profile from "../public/profile.jpeg";
-import { closeSideBar } from "@/store/userSlice";
+import { openSideBar } from "@/store/userSlice";
 import { useAppDispatch } from "@/store/hook";
 
 const users = [
@@ -65,7 +65,7 @@ const MyContacts = () => {
       {users.map((user) => (
         <div
           className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer"
-          onClick={() => dispatch(closeSideBar())}
+          onClick={() => dispatch(openSideBar())}
         >
           <Image
             className="rounded-full"
