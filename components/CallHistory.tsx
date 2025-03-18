@@ -3,12 +3,7 @@ import Image from "next/image";
 import React from "react";
 import profile from "../public/profile.jpeg";
 import moment from "moment";
-import {
-  Phone,
-  PhoneForwarded,
-  PhoneIncoming,
-  PhoneOutgoing,
-} from "lucide-react";
+import { Phone, PhoneIncoming, PhoneOutgoing } from "lucide-react";
 import { useAppSelector } from "@/store/hook";
 
 // Call ID (Unique identifier)
@@ -151,7 +146,10 @@ const CallHistory = () => {
   return (
     <div className="p-3 h-[calc(100vh-10vh-73px)] overflow-auto">
       {callHistory.map((call) => (
-        <div className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer">
+        <div
+          className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer"
+          key={call.start_time}
+        >
           <Image
             className="rounded-full"
             width={45}

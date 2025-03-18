@@ -104,6 +104,7 @@ const ChatList = () => {
     <div className="p-3 h-[calc(100vh-10vh-100px)] max-sm:h-[calc(100vh-10vh-85px)] overflow-auto">
       {chathistory.map((user) => (
         <div
+          key={user.user_id}
           className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer"
           onClick={() => dispatch(closeSideBar())}
         >

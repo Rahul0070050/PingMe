@@ -7,7 +7,7 @@ interface DatePickerProps {
   error?: string;
 }
 
-const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, error }) => {
+const DatePicker: React.FC<DatePickerProps> = ({ onChange, error }) => {
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
   const months = [

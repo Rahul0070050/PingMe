@@ -10,7 +10,6 @@ interface SaveSettingsSectionProps {
 const SaveSettingsSection: React.FC<SaveSettingsSectionProps> = ({
   isSubmitting,
   errors,
-  handleSubmit,
 }) => (
   <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
     {errors.submit && (

@@ -96,6 +96,7 @@ export default function StartNewChat({ onChatStarted }: StartNewChatProps) {
           isGroupChat: false,
         });
       } catch (error) {
+        console.log(error);
         setErrors({ submit: "Failed to start chat. Please try again." });
       }
     }

@@ -1,6 +1,6 @@
 import React from "react";
 import { Camera } from "lucide-react";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import { UserSettings } from "../utils/userSettingsLogic";
 
 interface ProfileImageSectionProps {

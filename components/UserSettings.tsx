@@ -1,16 +1,13 @@
 "use client";
 
 import React, { useState, FormEvent } from "react";
-import { useAppDispatch, useAppSelector } from "@/store/hook";
+import { useAppDispatch } from "@/store/hook";
 import {
-  X,
   Bell,
   MessageSquare,
   Phone,
   Video,
-  Blocks,
   UserRoundX,
-  Backpack,
   CircleArrowLeft,
 } from "lucide-react";
 import SubmitButton from "../components/SubmitButton";
@@ -26,7 +23,7 @@ interface ContactSettings {
 
 const SettingsPage: React.FC<{ contactId: number }> = ({ contactId }) => {
   const dispatch = useAppDispatch();
-  const { username } = useAppSelector((state) => state.user); // Current user's data (optional)
+  // const { username } = useAppSelector((state) => state.user); // Current user's data (optional)
 
   // Simulated initial settings for the selected contact (replace with actual data fetch)
   const [settings, setSettings] = useState<ContactSettings>({

@@ -64,6 +64,7 @@ const MyContacts = () => {
     <div className="p-3 h-[calc(100vh-10vh-73px)] overflow-auto">
       {users.map((user) => (
         <div
+          key={user.user_id}
           className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer"
           onClick={() => dispatch(openSideBar())}
         >

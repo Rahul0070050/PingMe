@@ -89,7 +89,7 @@ const UserProfile: React.FC = () => {
         </div>
       </div>
       <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-        {contactInfo.map(({ icon: Icon, text, label }) => (
+        {contactInfo.map(({ icon: Icon, text }) => (
           <div key={text} className="flex items-center gap-3 py-2">
             <Icon className="w-5 h-5 text-gray-500" />
             <span className="text-sm text-gray-700">{text}</span>

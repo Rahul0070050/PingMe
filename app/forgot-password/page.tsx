@@ -62,7 +62,16 @@ export default function ForgotPasswordPage() {
           submit: "If an account exists, a reset link has been sent.",
         });
       } catch (error) {
-        setErrors({ submit: "Failed to send reset email. Please try again." });
+        if (error instanceof Error) {
+          setErrors({
+            submit: error.message,
+          });
+          return;
+        }
+        console.log(error);
+        setErrors({
+          submit: "Failed to send reset email. Please try again." + error,
+        });
       }
     }
     setIsSubmitting(false);

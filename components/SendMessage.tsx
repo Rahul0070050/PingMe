@@ -33,6 +33,7 @@ const SendMessage = ({
   }, [socket]);
 
   const handleSubmit = (e: FormEvent) => {
+    console.log(messages);
     e.preventDefault();
     if (message.trim()) {
       // socket.emit("send-message", { message });

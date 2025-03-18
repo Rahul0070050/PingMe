@@ -21,7 +21,7 @@ const ChatWindow: React.FC = () => {
     }
   }, []);
 
-  const [message, setMessage] = useState("");
+  // const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<MessageData[]>([]);
 
   const socket = useSocket();
@@ -44,7 +44,7 @@ const ChatWindow: React.FC = () => {
     alert();
     if (socket && message.trim()) {
       socket.emit("send-message", { message });
-      setMessage("");
+      // setMessage("");
     }
   };
 

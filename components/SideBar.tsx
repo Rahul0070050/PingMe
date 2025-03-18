@@ -11,7 +11,6 @@ import {
   MessageSquareText,
   Phone,
   Search,
-  Settings,
   SquareUser,
   User,
 } from "lucide-react";
@@ -24,9 +23,7 @@ import MyContacts from "./MyContacts";
 
 const SideBar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { openSettings, openStartNewChat } = useAppSelector(
-    (state) => state.user
-  );
+  const { openSettings } = useAppSelector((state) => state.user);
   const [selectedTab, setSelectedTab] = useState<
     "messages" | "calls" | "contacts"
   >("messages");

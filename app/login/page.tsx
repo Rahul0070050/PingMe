@@ -50,7 +50,9 @@ export default function LoginPage() {
         });
         return;
       }
-      console.log("data ", data);
+      console.log(token);
+
+      // console.log("data ", data);
       setToken(data.data.token);
       navigate.push("/chat");
     } catch (err) {

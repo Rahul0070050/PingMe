@@ -4,7 +4,7 @@ import React from "react";
 import Image from "next/image";
 import { CircleArrowLeft, EllipsisVertical, Phone, Video } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
-import { openSideBar, closeSideBar, toggleUserInfo } from "@/store/userSlice";
+import { openSideBar, toggleUserInfo } from "@/store/userSlice";
 
 const ChatHeader: React.FC = () => {
   const { avatar, username } = useAppSelector((state) => state.user);

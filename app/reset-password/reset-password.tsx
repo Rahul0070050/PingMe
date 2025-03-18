@@ -79,7 +79,15 @@ export default function ResetPasswordPage() {
         // Optionally redirect after a delay
         setTimeout(() => (window.location.href = "/login"), 2000);
       } catch (error) {
-        setErrors({ submit: "Failed to reset password. Please try again." });
+        if (error instanceof Error) {
+          setErrors({
+            submit: error.message,
+          });
+          return;
+        }
+        setErrors({
+          submit: "Failed to reset password. Please try again." + error,
+        });
       }
     }
     setIsSubmitting(false);
