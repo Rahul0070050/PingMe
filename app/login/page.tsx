@@ -1,92 +1,86 @@
 "use client";
 
+import { USER_LOGIN_URL } from "@/backend/urls";
+import useAxios from "@/hooks/useAxios";
+import useFormValidation from "@/hooks/useFormValidation";
+import { validationRules } from "@/utils/formValidationRules";
 import Link from "next/link";
-import { useState, FormEvent } from "react";
-
-interface FormData {
-  username: string;
-  password: string;
-}
-
-interface Errors {
-  username?: string;
-  password?: string;
-  submit?: string;
-}
+import { useRouter } from "next/navigation";
+import { useState, FormEvent, ChangeEvent } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
-  const [errors, setErrors] = useState<Errors>({});
+
+  const navigate = useRouter();
+  const { loading, fetchData } = useAxios(USER_LOGIN_URL, "POST");
+
+  const { errors, setErrors, validateField, validateForm } = useFormValidation(
+    formData,
+    validationRules
+  );
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const validateForm = (): boolean => {
-    const tempErrors: Errors = {};
-
-    if (!formData.username.trim()) {
-      tempErrors.username = "Username is required";
-    } else if (formData.username.length < 3) {
-      tempErrors.username = "Username must be at least 3 characters";
-    }
-
-    if (!formData.password) {
-      tempErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      tempErrors.password = "Password must be at least 6 characters";
-    }
-
-    setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (errors[name as keyof Errors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: undefined,
-      }));
-    }
+    setFormData((prev) => {
+      const updatedData = { ...prev, [name]: value };
+      validateField(name, value, updatedData);
+      return updatedData;
+    });
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (validateForm()) {
-      try {
-        // Add your authentication logic here
-        console.log("Form submitted:", formData);
-        // Example: await loginUser(formData);
-      } catch (error) {
-        setErrors({ submit: "Login failed. Please try again." });
-      }
+    if (!validateForm(formData)) {
+      setIsSubmitting(false);
+      return;
     }
+
+    try {
+      const { data, error } = await fetchData(formData);
+
+      if (error) {
+        toast.error(error?.message, {
+          position: "top-right",
+        });
+        return;
+      }
+      navigate.push("/chat");
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err?.message, {
+          position: "top-right",
+        });
+      }
+      console.log(err);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Login failed. Please try again.",
+      }));
+    }
+
     setIsSubmitting(false);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
+      <Toaster />
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-8 transform transition-all hover:shadow-2xl">
-        {/* Logo and Header */}
         <div className="text-center space-y-4">
-          <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-              Sign In
-            </h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Enter your credentials to access your account
-            </p>
-          </div>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Sign In
+          </h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Enter your credentials to access your account
+          </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-1">
             <label
@@ -101,9 +95,7 @@ export default function LoginPage() {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg 
-                focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
-                transition-all duration-200 text-gray-900 placeholder-gray-400 shadow-sm"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 shadow-sm"
               placeholder="Enter your username"
             />
             {errors.username && (
@@ -126,9 +118,7 @@ export default function LoginPage() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg 
-                focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
-                transition-all duration-200 text-gray-900 placeholder-gray-400 shadow-sm"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-400 shadow-sm"
               placeholder="Enter your password"
             />
             {errors.password && (
@@ -170,13 +160,12 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={isSubmitting}
-            className={`w-full py-3 px-4 bg-indigo-600 text-white rounded-lg font-semibold
-              shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 
-              focus:ring-offset-2 transition-all duration-200 flex items-center justify-center
-              ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""}`}
+            disabled={loading}
+            className={`w-full py-3 px-4 bg-indigo-600 text-white rounded-lg font-semibold shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 flex items-center justify-center ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
-            {isSubmitting ? (
+            {loading ? (
               <>
                 <svg
                   className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -206,11 +195,10 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Footer */}
         <p className="text-center text-sm text-gray-600">
           Don&apos;t have an account?{" "}
           <Link
-            href="#"
+            href="/signup"
             className="text-indigo-600 hover:text-indigo-800 font-medium transition duration-150"
           >
             Sign up

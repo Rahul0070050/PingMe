@@ -5,28 +5,15 @@ import InputField from "@/components/InputField";
 import DatePicker from "@/components/DatePicker";
 import SubmitButton from "@/components/SubmitButton";
 import FormFooter from "@/components/FormFooter";
-
-interface FormData {
-  username: string;
-  email: string;
-  phone: string;
-  dateOfBirth: string;
-  password: string;
-  confirmPassword: string;
-}
-
-interface Errors {
-  username?: string;
-  email?: string;
-  phone?: string;
-  dateOfBirth?: string;
-  password?: string;
-  confirmPassword?: string;
-  submit?: string;
-}
+import useAxios from "@/hooks/useAxios";
+import { USER_REGISTER_URL } from "@/backend/urls";
+import toast, { Toaster } from "react-hot-toast";
+import useFormValidation from "@/hooks/useFormValidation";
+import { validationRules } from "@/utils/formValidationRules";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<Record<string, string>>({
     username: "",
     email: "",
     phone: "",
@@ -34,55 +21,13 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
   });
-  const [errors, setErrors] = useState<Errors>({});
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  const validateForm = (): boolean => {
-    const tempErrors: Errors = {};
-
-    if (!formData.username.trim()) {
-      tempErrors.username = "Username is required";
-    } else if (formData.username.length < 3) {
-      tempErrors.username = "Username must be at least 3 characters";
-    }
-
-    if (!formData.email) {
-      tempErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      tempErrors.email = "Email is invalid";
-    }
-
-    if (!formData.phone) {
-      tempErrors.phone = "Phone number is required";
-    } else if (!/^\d{10}$/.test(formData.phone.replace(/\D/g, ""))) {
-      tempErrors.phone = "Phone number must be 10 digits";
-    }
-
-    if (!formData.dateOfBirth) {
-      tempErrors.dateOfBirth = "Date of birth is required";
-    } else {
-      const dob = new Date(formData.dateOfBirth);
-      const today = new Date();
-      if (dob >= today) {
-        tempErrors.dateOfBirth = "Date of birth must be in the past";
-      }
-    }
-
-    if (!formData.password) {
-      tempErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      tempErrors.password = "Password must be at least 6 characters";
-    }
-
-    if (!formData.confirmPassword) {
-      tempErrors.confirmPassword = "Confirm password is required";
-    } else if (formData.password !== formData.confirmPassword) {
-      tempErrors.confirmPassword = "Passwords do not match";
-    }
-
-    setErrors(tempErrors);
-    return Object.keys(tempErrors).length === 0;
-  };
+  
+  const { errors, setErrors, validateField, validateForm } = useFormValidation(
+    formData,
+    validationRules
+  );
+  const navigate = useRouter();
+  const { loading, fetchData } = useAxios(USER_REGISTER_URL, "POST");
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -90,12 +35,7 @@ export default function SignupPage() {
       ...prev,
       [name]: name === "phone" ? value.replace(/\D/g, "") : value,
     }));
-    if (errors[name as keyof Errors]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: undefined,
-      }));
-    }
+    validateField(name, value, { ...formData, [name]: value });
   };
 
   const handleDateChange = (date: string): void => {
@@ -103,46 +43,51 @@ export default function SignupPage() {
       ...prev,
       dateOfBirth: date,
     }));
-    if (errors.dateOfBirth) {
-      setErrors((prev) => ({
-        ...prev,
-        dateOfBirth: undefined,
-      }));
-    }
+    validateField("dateOfBirth", date);
   };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    setIsSubmitting(true);
+    if (!validateForm(formData)) return;
 
-    if (validateForm()) {
-      try {
-        console.log("Form submitted:", formData);
-        // Add your signup logic here
-        // Example: await signupUser(formData);
-      } catch (error) {
-        setErrors({ submit: "Signup failed. Please try again." });
+    try {
+      const { data, error } = await fetchData(formData);
+
+      if (error) {
+        toast.error(error?.message, {
+          position: "top-right",
+        });
+        return;
       }
+      navigate.push("/login");
+      console.log(data);
+    } catch (err) {
+      if (err instanceof Error) {
+        toast.error(err?.message, {
+          position: "top-right",
+        });
+      }
+      console.log(err);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "Signup failed. Please try again.",
+      }));
     }
-    setIsSubmitting(false);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
+      <Toaster />
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-8 transform transition-all hover:shadow-2xl">
-        {/* Header */}
         <div className="text-center space-y-4">
-          <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-              Create Account
-            </h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Join us by filling in your details
-            </p>
-          </div>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Create Account
+          </h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Join us by filling in your details
+          </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <InputField
             label="Username"
@@ -210,7 +155,7 @@ export default function SignupPage() {
           )}
 
           <SubmitButton
-            isSubmitting={isSubmitting}
+            isSubmitting={loading}
             label="Sign Up"
             loadingLabel="Signing up..."
           />
