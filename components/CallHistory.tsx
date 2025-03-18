@@ -131,7 +131,6 @@ const callHistory = [
     start_time: "2025-03-07T07:10:00Z",
     end_time: "2025-03-07T07:11:00Z",
   },
-  // Ongoing Outgoing Call (Video)
   {
     call_id: "1009",
     caller_id: 1,
@@ -172,7 +171,7 @@ const CallHistory = () => {
                 call.call_status === "MISSED" ? (
                   <PhoneOutgoing className="text-red-500" /> // Outgoing Missed Call
                 ) : call.call_status === "COMPLETED" ? (
-                  <PhoneForwarded className="text-green-500" /> // Outgoing Completed Call
+                  <PhoneOutgoing className="text-green-500" /> // Outgoing Completed Call
                 ) : call.call_status === "REJECTED" ? (
                   <PhoneOutgoing className="text-red-500" /> // Outgoing Rejected Call
                 ) : call.call_status === "ONGOING" ? (

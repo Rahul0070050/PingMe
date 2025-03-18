@@ -60,21 +60,21 @@ const ChatHeader: React.FC = () => {
             transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           aria-label="Start a voice call"
         >
-          <Phone className="w-4 h-4 max-md:w-5 max-md:h-5" />
+          <Phone className="w-5 h-5 max-md:w-5 max-md:h-5" />
         </button>
         <button
           className="p-1 sm:p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
             transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           aria-label="Start a video call"
         >
-          <Video className="w-4 h-4 max-md:w-5 max-md:h-5" />
+          <Video className="w-5 h-5 max-md:w-5 max-md:h-5" />
         </button>
         <button
           className="p-1 sm:p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
             transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           aria-label="More options"
         >
-          <EllipsisVertical className="w-4 h-4 max-md:w-5 max-md:h-5" />
+          <EllipsisVertical className="w-5 h-5 max-md:w-5 max-md:h-5" />
         </button>
       </div>
     </div>

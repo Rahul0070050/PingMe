@@ -101,7 +101,7 @@ const chathistory = [
 const ChatList = () => {
   const dispatch = useAppDispatch();
   return (
-    <div className="p-3 h-[calc(100vh-10vh-73px)] max-sm:h-[calc(100vh-10vh-85px)] overflow-auto">
+    <div className="p-3 h-[calc(100vh-10vh-100px)] max-sm:h-[calc(100vh-10vh-85px)] overflow-auto">
       {chathistory.map((user) => (
         <div
           className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer"

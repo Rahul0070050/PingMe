@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import {
   Camera,
   Mic,
@@ -8,21 +8,41 @@ import {
   SendHorizontal,
   SmileIcon,
 } from "lucide-react";
+import { useSocket } from "@/hooks/useSocket";
 
-const SendMessage: React.FC = () => {
+const SendMessage = ({
+  handleSendMessage,
+}: {
+  handleSendMessage: (message: string) => void;
+}) => {
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("message", (msg: string) => {
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    return () => {
+      socket.off("message");
+    };
+  }, [socket]);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      console.log("Sending message:", message);
+      // socket.emit("send-message", { message });
+      handleSendMessage(message);
       setMessage("");
     }
   };
 
   return (
     <div className="flex items-center p-2 sm:p-4 border-t border-gray-200 bg-white shadow-sm w-full">
-      {/* Emoji Button - Hidden on very small screens */}
       <button
         className="hidden sm:block p-1 sm:p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
           transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -30,8 +50,6 @@ const SendMessage: React.FC = () => {
       >
         <SmileIcon className="w-5 h-5" />
       </button>
-
-      {/* Form with Input and Action Buttons */}
       <form
         onSubmit={handleSubmit}
         className="flex items-center flex-1 mx-1 sm:mx-3 bg-gray-50 border border-gray-200 rounded-full p-1 sm:p-2 shadow-inner"
@@ -46,7 +64,6 @@ const SendMessage: React.FC = () => {
           aria-label="Message input"
         />
         <div className="flex gap-1 sm:gap-2 text-gray-500 pr-1 sm:pr-2">
-          {/* Attachment Button - Smaller on mobile */}
           <button
             type="button"
             className="p-1 sm:p-1.5 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
@@ -55,7 +72,6 @@ const SendMessage: React.FC = () => {
           >
             <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 rotate-45" />
           </button>
-          {/* Camera Button - Hidden on very small screens */}
           <button
             type="button"
             className="hidden sm:block p-1 sm:p-1.5 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
@@ -64,7 +80,6 @@ const SendMessage: React.FC = () => {
           >
             <Camera className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
-          {/* Mic Button - Hidden on very small screens */}
           <button
             type="button"
             className="hidden sm:block p-1 sm:p-1.5 hover:text-indigo-600 hover:bg-indigo-50 rounded-full 
@@ -75,8 +90,6 @@ const SendMessage: React.FC = () => {
           </button>
         </div>
       </form>
-
-      {/* Send Button */}
       <button
         onClick={handleSubmit}
         disabled={!message.trim()}

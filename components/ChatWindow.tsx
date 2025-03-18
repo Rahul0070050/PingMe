@@ -1,97 +1,16 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import SendMessage from "./SendMessage";
+import { useSocket } from "@/hooks/useSocket";
 
 interface MessageData {
   message: string;
   sender: number;
   date: string;
 }
-
-const messages: MessageData[] = [
-  {
-    message: "That sounds awesome! Are you using WebRTC for the video calls?",
-    sender: 2,
-    date: "2025-03-06T10:05:00Z",
-  },
-  {
-    message:
-      "Yeah, WebRTC for real-time communication and getstream.io for chat features.",
-    sender: 1,
-    date: "2025-03-06T10:06:00Z",
-  },
-  {
-    message:
-      "That's a solid tech stack! Are you handling authentication yourself?",
-    sender: 2,
-    date: "2025-03-06T10:07:00Z",
-  },
-  {
-    message:
-      "Nope, I'm using Clerk for authentication. It simplifies things a lot!",
-    sender: 1,
-    date: "2025-03-06T10:08:00Z",
-  },
-  {
-    message: "Clerk is great! Are you planning to add any extra features?",
-    sender: 2,
-    date: "2025-03-06T10:09:00Z",
-  },
-  {
-    message: "Yeah, I want to add meeting scheduling and recording features.",
-    sender: 1,
-    date: "2025-03-06T10:10:00Z",
-  },
-  {
-    message:
-      "That would make it super useful! Let me know if you need a tester. 😃",
-    sender: 2,
-    date: "2025-03-06T10:11:00Z",
-  },
-  {
-    message:
-      "Thanks! I'll definitely reach out once I have a beta version ready.",
-    sender: 1,
-    date: "2025-03-06T10:12:00Z",
-  },
-  {
-    message:
-      "That's a solid tech stack! Are you handling authentication yourself?",
-    sender: 2,
-    date: "2025-03-06T10:07:00Z",
-  },
-  {
-    message:
-      "Nope, I'm using Clerk for authentication. It simplifies things a lot!",
-    sender: 1,
-    date: "2025-03-06T10:08:00Z",
-  },
-  {
-    message: "Clerk is great! Are you planning to add any extra features?",
-    sender: 2,
-    date: "2025-03-06T10:09:00Z",
-  },
-  {
-    message: "Yeah, I want to add meeting scheduling and recording features.",
-    sender: 1,
-    date: "2025-03-06T10:10:00Z",
-  },
-  {
-    message:
-      "That would make it super useful! Let me know if you need a tester. 😃",
-    sender: 2,
-    date: "2025-03-06T10:11:00Z",
-  },
-  {
-    message:
-      "Thanks! I'll definitely reach out once I have a beta version ready.",
-    sender: 1,
-    date: "2025-03-06T10:12:00Z",
-  },
-];
 
 const ChatWindow: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -101,6 +20,33 @@ const ChatWindow: React.FC = () => {
       scrollRef.current.scrollIntoView({ behavior: "auto" });
     }
   }, []);
+
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<MessageData[]>([]);
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    console.log("socketio");
+
+    socket.on("get-messages", (msg: MessageData[]) => {
+      console.log("msg ", msg);
+      setMessages((prev) => [...prev, ...msg]);
+    });
+
+    return () => {
+      socket.off("message");
+    };
+  }, [socket]);
+
+  const handleSubmit = (message: string) => {
+    alert();
+    if (socket && message.trim()) {
+      socket.emit("send-message", { message });
+      setMessage("");
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-white shadow-inner">
@@ -112,18 +58,20 @@ const ChatWindow: React.FC = () => {
           scrollbar-thumb-gray-300 scrollbar-track-gray-100"
       >
         {messages.length > 0 ? (
-          messages.map((message, index) => (
-            <Message key={`${message.date}-${index}`} message={message} />
-          ))
+          <>
+            {messages.map((message, index) => (
+              <Message key={`${message.date}-${index}`} message={message} />
+            ))}
+            <div ref={scrollRef} />
+          </>
         ) : (
           <div className="flex items-center justify-center h-full text-gray-500">
             No messages yet. Start the conversation!
           </div>
         )}
       </div>
-      <div ref={scrollRef} />
       <div className="border-t border-gray-200 bg-white p-4">
-        <SendMessage />
+        <SendMessage handleSendMessage={handleSubmit} />
       </div>
     </div>
   );

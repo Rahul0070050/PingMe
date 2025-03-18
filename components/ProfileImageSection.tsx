@@ -24,9 +24,9 @@ const ProfileImageSection: React.FC<ProfileImageSectionProps> = ({
         <Image
           src={imagePreview}
           alt="Profile preview"
-          width={96}
-          height={96}
-          className="rounded-full border border-gray-300 object-cover"
+          width={100}
+          height={100}
+          className="rounded-full border border-gray-300 object-contain"
         />
       ) : (
         <div className="w-24 h-24 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-semibold text-3xl">
