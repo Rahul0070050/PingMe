@@ -1,41 +1,33 @@
+// components/PrivateRoute.tsx
 "use client";
 
-import { AuthState } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import LoadingScreen from "./LoadingScreen";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 interface PrivateRouteProps {
   children: ReactNode;
   redirectPath?: string;
+  loadingMessage?: string;
 }
 
 const PrivateRoute = ({
   children,
   redirectPath = "/login",
+  loadingMessage = "Verifying access...",
 }: PrivateRouteProps) => {
   const router = useRouter();
-  const [authState, setAuthState] = useState<AuthState>({
-    token: null,
-    isAuthenticated: false,
-  });
+  const [token, , removeToken] = useLocalStorage<string>("token", null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const verifyAuth = async () => {
       try {
-        const token = localStorage.getItem("token");
-
         if (!token) {
           router.push(redirectPath);
           return;
         }
-
-        // Add your token verification logic here if needed
-        setAuthState({
-          token,
-          isAuthenticated: true,
-        });
       } catch (error) {
         console.error("Auth verification failed:", error);
         router.push(redirectPath);
@@ -45,17 +37,29 @@ const PrivateRoute = ({
     };
 
     verifyAuth();
-  }, [router, redirectPath]);
+  }, [router, redirectPath, token]);
 
   if (isLoading) {
-    return <LoadingScreen size="md" color="blue-600" />;
+    return (
+      <LoadingScreen message={loadingMessage} size="md" color="blue-600" />
+    );
   }
 
-  if (!authState.isAuthenticated) {
+  if (!token) {
     return null;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      <button
+        onClick={removeToken}
+        className="fixed bottom-4 right-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+      >
+        Logout
+      </button>
+    </>
+  );
 };
 
 export default PrivateRoute;

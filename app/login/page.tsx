@@ -3,6 +3,7 @@
 import { USER_LOGIN_URL } from "@/backend/urls";
 import useAxios from "@/hooks/useAxios";
 import useFormValidation from "@/hooks/useFormValidation";
+import useLocalStorage from "@/hooks/useLocalStorage";
 import { validationRules } from "@/utils/formValidationRules";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,6 +15,7 @@ export default function LoginPage() {
     username: "",
     password: "",
   });
+  const [token, setToken] = useLocalStorage("token", null);
 
   const navigate = useRouter();
   const { loading, fetchData } = useAxios(USER_LOGIN_URL, "POST");
@@ -22,7 +24,6 @@ export default function LoginPage() {
     formData,
     validationRules
   );
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
@@ -35,10 +36,8 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    setIsSubmitting(true);
 
     if (!validateForm(formData)) {
-      setIsSubmitting(false);
       return;
     }
 
@@ -51,6 +50,8 @@ export default function LoginPage() {
         });
         return;
       }
+      console.log("data ", data);
+      setToken(data.data.token);
       navigate.push("/chat");
     } catch (err) {
       if (err instanceof Error) {
@@ -64,8 +65,6 @@ export default function LoginPage() {
         submit: "Login failed. Please try again.",
       }));
     }
-
-    setIsSubmitting(false);
   };
 
   return (
