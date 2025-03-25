@@ -45,15 +45,15 @@ export default function LoginPage() {
       const { data, error } = await fetchData(formData);
 
       if (error) {
-        toast.error(error?.message, {
+        toast.error(error, {
           position: "top-right",
         });
         return;
       }
-      console.log(token);
-
-      // console.log("data ", data);
       setToken(data.data.token);
+      toast.success("Successfuly Loged In", { 
+        position: "top-right",
+      });
       navigate.push("/chat");
     } catch (err) {
       if (err instanceof Error) {

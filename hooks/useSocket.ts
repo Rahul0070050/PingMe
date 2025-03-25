@@ -1,18 +1,11 @@
-import { BASE_SOCKET_URL } from "@/backend/urls";
-import { useEffect, useState } from "react";
-import { io, Socket } from "socket.io-client";
+"use client";
+import { SocketContext } from "@/app/socketContext";
+import { useContext } from "react";
 
-export const useSocket = (token?: string) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
-
-  useEffect(() => {
-    const socketInstance = io(BASE_SOCKET_URL, { auth: { token } });
-    setSocket(socketInstance);
-
-    return () => {
-      socketInstance.disconnect();
-    };
-  }, []);
-
-  return socket;
+export const useSocket = () => {
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error("useSocket must be used within a SocketProvider");
+  }
+  return context;
 };

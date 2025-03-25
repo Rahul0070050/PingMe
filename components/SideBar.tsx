@@ -20,6 +20,13 @@ import { toggleSettings, toggleStartANewChat } from "@/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import CallHistory from "./CallHistory";
 import MyContacts from "./MyContacts";
+import { useSocket } from "@/hooks/useSocket";
+
+interface MessageData {
+  message: string;
+  sender: number;
+  date: string;
+}
 
 const SideBar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -65,6 +72,20 @@ const SideBar: React.FC = () => {
     // },
     { icon: LogOut, label: "Logout", action: () => console.log("Logout") },
   ];
+
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    console.log("socketio");
+    // socket.on("get-messages", (msg: MessageData[]) => {
+    //   console.log("msg ", msg);
+    // });
+
+    return () => {
+      socket.off("get-messages");
+    };
+  }, []);
 
   const handleMenuToggle = () => {
     setIsMenuOpen((prev) => !prev);

@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import axios, { AxiosRequestConfig } from "axios";
+import useLocalStorage from "./useLocalStorage";
 
 const useAxios = (
   url: string,
@@ -10,35 +11,54 @@ const useAxios = (
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // ✅ Ensure token is always a string or undefined
+  const [token] = useLocalStorage<string | undefined>("token", undefined);
+
   const fetchData = useCallback(
     async (body: any = null) => {
       setError(null);
       setLoading(true);
+
       try {
+        const headers: Record<any, any> = {
+          "Content-Type": "application/json",
+          ...(options?.headers ? options.headers : {}),
+        };
+
+        if (token) {
+          headers["Authorization"] = `Bearer ${token}`;
+        }
+
         const response = await axios({
           url,
           method,
           data: body,
           ...options,
-          headers: {
-            "Content-Type": "application/json",
-            ...options.headers,
-          },
+          headers,
         });
+
         setData(response.data);
-        return { data: response.data, error: null }; // Return response
+        return { data: response.data, error: null };
       } catch (error: any) {
-        const errorMsg = error.response?.data || "Something went wrong";
+        console.error("API request failed:", error);
+
+        let errorMsg = "Something went wrong";
+        if (axios.isAxiosError(error)) {
+          errorMsg = error.response?.data?.message || error.message;
+        } else if (error instanceof Error) {
+          errorMsg = error.message;
+        }
+
         setError(errorMsg);
-        return { data: null, error: errorMsg }; // Return error
+        return { data: null, error: errorMsg };
       } finally {
         setLoading(false);
       }
     },
-    [url, method, options]
+    [url, method, options, token] // ✅ Ensures updated token & options
   );
 
-  return { loading, fetchData };
+  return { loading, fetchData, data, error };
 };
 
 export default useAxios;

@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import SendMessage from "./SendMessage";
+import { SocketContext } from "@/app/socketContext";
 import { useSocket } from "@/hooks/useSocket";
 
 interface MessageData {
@@ -14,37 +15,33 @@ interface MessageData {
 
 const ChatWindow: React.FC = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behavior: "auto" });
     }
   }, []);
 
-  // const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<MessageData[]>([]);
 
-  const socket = useSocket();
-
+  const { socket } = useSocket();
   useEffect(() => {
-    if (!socket) return;
-    console.log("socketio");
+    console.log(socket);
+
+    if (socket == null) return;
 
     socket.on("get-messages", (msg: MessageData[]) => {
-      console.log("msg ", msg);
+      console.log("get-messages");
+
       setMessages((prev) => [...prev, ...msg]);
     });
 
     return () => {
-      socket.off("message");
+      socket.off("get-messages");
     };
   }, [socket]);
-
   const handleSubmit = (message: string) => {
-    alert();
     if (socket && message.trim()) {
       socket.emit("send-message", { message });
-      // setMessage("");
     }
   };
 

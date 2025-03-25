@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import profile from "../public/profile.jpeg";
 import { StaticImageData } from "next/image";
+import { Socket } from "socket.io-client";
 
 interface UserState {
   id: number;
@@ -34,7 +35,7 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<Partial<UserState>>) => {
-      return { ...state, ...action.payload };
+      Object.assign(state, action.payload);
     },
     removeUser: (state) => {
       return {

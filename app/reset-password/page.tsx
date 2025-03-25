@@ -18,7 +18,7 @@ interface Errors {
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
-  const token = searchParams.get("token"); // Assuming a token is passed in the URL
+  const token = searchParams.get("token");
 
   const [formData, setFormData] = useState<FormData>({
     password: "",

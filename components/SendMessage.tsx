@@ -16,27 +16,10 @@ const SendMessage = ({
   handleSendMessage: (message: string) => void;
 }) => {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
-
-  const socket = useSocket();
-
-  useEffect(() => {
-    if (!socket) return;
-
-    socket.on("message", (msg: string) => {
-      setMessages((prev) => [...prev, msg]);
-    });
-
-    return () => {
-      socket.off("message");
-    };
-  }, [socket]);
 
   const handleSubmit = (e: FormEvent) => {
-    console.log(messages);
     e.preventDefault();
     if (message.trim()) {
-      // socket.emit("send-message", { message });
       handleSendMessage(message);
       setMessage("");
     }

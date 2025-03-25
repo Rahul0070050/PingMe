@@ -1,101 +1,274 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect } from "react";
+import Image, { StaticImageData } from "next/image";  
+import useLocalStorage from "@/hooks/useLocalStorage";
+import Link from "next/link";
+import LoadingScreen from "@/components/LoadingScreen";
+import banner from "@/public/images/banner.svg";
+import chatlockChat from "@/public/images/chatlock.svg";
+import happyChat from "@/public/images/happy.svg";
+
+interface User {
+  name: string;
+  email: string;
+}
+
+export default function Dashboard() {
+  const [user, setUser, removeUser] = useLocalStorage<User | null>(
+    "user",
+    null
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLogin = () => {
+    setUser({ name: "Alex Smith", email: "alex@example.com" });
+  };
+
+  const handleLogout = () => {
+    removeUser();
+  };
+
+  if (isLoading) {
+    return (
+      <LoadingScreen message="Launching PingMe..." size="lg" color="sky-500" />
+    );
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gray-50 font-sans antialiased">
+      <header className="bg-white py-6 shadow-sm sticky top-0 z-50">
+        <div className="container mx-auto px-6 flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-sky-600 tracking-tight">
+            PingMe
+          </h1>
+          <nav className="flex items-center space-x-8">
+            <Link
+              href="#features"
+              className="text-gray-600 hover:text-sky-500 transition-colors duration-200"
+            >
+              Features
+            </Link>
+            <Link
+              href="#benefits"
+              className="text-gray-600 hover:text-sky-500 transition-colors duration-200"
+            >
+              Benefits
+            </Link>
+            <Link
+              href="#start"
+              className="text-gray-600 hover:text-sky-500 transition-colors duration-200"
+            >
+              Get Started
+            </Link>
+            {user ? (
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-700 font-medium">{user.name}</span>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-sky-100 text-sky-700 rounded-lg hover:bg-sky-200 transition-colors duration-200 font-semibold"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleLogin}
+                className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors duration-200 font-semibold"
+              >
+                Sign In
+              </button>
+            )}
+          </nav>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </header>
+      <section className="py-24 bg-gradient-to-b from-white to-gray-100">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
+            Connect Like Never Before
+          </h2>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            PingMe offers chatting, video calls, voice calls, conferencing, and
+            screen sharing—all in one elegant platform.
+          </p>
+          <Link
+            href={user ? "/chat" : "/login"}
+            className="inline-block px-8 py-4 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
+          >
+            {user ? "Enter Chat" : "Try It Free"}
+          </Link>
+          <div className="mt-12">
+            <Image
+              src={banner}
+              alt="PingMe Preview"
+              className="p-20 rounded-xl mx-auto max-w-4xl w-full transform hover:scale-102 transition-transform duration-300"
+            />
+          </div>
+        </div>
+      </section>
+      <section id="features" className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <h3 className="text-3xl font-bold text-gray-900 text-center mb-12">
+            All-in-One Communication
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <FeatureCard
+              title="Chatting"
+              description="Send messages instantly with a clean, intuitive interface."
+              icon="💬"
+            />
+            <FeatureCard
+              title="Video Calls"
+              description="Crystal-clear one-on-one video calls."
+              icon="🎥"
+            />
+            <FeatureCard
+              title="Voice Calls"
+              description="High-quality voice calls anytime, anywhere."
+              icon="📞"
+            />
+            <FeatureCard
+              title="Video Call Conferencing"
+              description="Host video conferences with multiple participants."
+              icon="👥"
+            />
+            <FeatureCard
+              title="Voice Call Conferencing"
+              description="Conduct group voice calls with ease."
+              icon="👥"
+            />
+            <FeatureCard
+              title="Screen Sharing"
+              description="Share your screen seamlessly during calls or conferences."
+              icon="🖥️"
+            />
+          </div>
+        </div>
+      </section>
+      <section id="benefits" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-6">
+          <h3 className="text-3xl font-bold text-gray-900 text-center mb-12">
+            Why PingMe Stands Out
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <BenefitCard
+              title="Seamless Experience"
+              description="Switch between chatting, calls, and conferences effortlessly."
+              image={happyChat}
+            />
+            <BenefitCard
+              title="Secure & Reliable"
+              description="End-to-end encryption and 99.9% uptime for peace of mind."
+              image={chatlockChat}
+            />
+          </div>
+        </div>
+      </section>
+      {/* <section id="start" className="py-20 bg-sky-500 text-white text-center">
+        <div className="container mx-auto px-6">
+          <h3 className="text-3xl font-bold mb-6">
+            Start Communicating Smarter
+          </h3>
+          <p className="text-lg mb-8 max-w-xl mx-auto">
+            Experience the full power of chatting, video, voice conferencing,
+            and screen sharing with PingMe.
+          </p>
+          <Link
+            href={user ? "/chat" : "#signup"}
+            className="inline-block px-8 py-4 bg-white text-sky-500 rounded-lg hover:bg-gray-100 transition-all duration-300 shadow-md hover:shadow-lg font-semibold"
+          >
+            {user ? "Launch Chat" : "Get Started Now"}
+          </Link>
+        </div>
+      </section> */}
+      <footer className="bg-white py-10 border-t border-gray-200">
+        <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">PingMe</h4>
+            <p className="text-gray-600 text-sm">
+              Your all-in-one communication solution.
+            </p>
+          </div>
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">Links</h4>
+            <ul className="space-y-2 text-gray-600">
+              <li>
+                <Link href="#features" className="hover:text-sky-500">
+                  Features
+                </Link>
+              </li>
+              <li>
+                <Link href="#benefits" className="hover:text-sky-500">
+                  Benefits
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-sky-500">
+                  Contact
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">
+              Support
+            </h4>
+            <p className="text-gray-600 text-sm">support@pingme.com</p>
+            <p className="text-gray-600 text-sm">+1 (800) 555-7890</p>
+          </div>
+        </div>
+        <div className="text-center mt-8 text-gray-500 text-sm">
+          © 2025 PingMe. All rights reserved.
+        </div>
       </footer>
     </div>
   );
 }
+
+interface FeatureCardProps {
+  title: string;
+  description: string;
+  icon: string;
+}
+
+const FeatureCard: React.FC<FeatureCardProps> = ({
+  title,
+  description,
+  icon,
+}) => (
+  <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 flex items-start space-x-4">
+    <div className="w-10 h-10 bg-sky-100 rounded-full flex items-center justify-center text-xl">
+      {icon}
+    </div>
+    <div>
+      <h4 className="text-lg font-semibold text-gray-900 mb-2">{title}</h4>
+      <p className="text-gray-600 text-sm">{description}</p>
+    </div>
+  </div>
+);
+interface BenefitCardProps {
+  title: string;
+  description: string;
+  image: StaticImageData;
+}
+
+const BenefitCard: React.FC<BenefitCardProps> = ({
+  title,
+  description,
+  image,
+}) => (
+  <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
+    <Image
+      src={image}
+      alt={title}
+      className="object-contain w-full h-48 rounded-md mb-4"
+    />
+    <h4 className="text-xl font-semibold text-gray-900 mb-2">{title}</h4>
+    <p className="text-gray-600">{description}</p>
+  </div>
+);

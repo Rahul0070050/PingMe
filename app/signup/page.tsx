@@ -21,7 +21,7 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
   });
-  
+
   const { errors, setErrors, validateField, validateForm } = useFormValidation(
     formData,
     validationRules
@@ -54,7 +54,7 @@ export default function SignupPage() {
       const { data, error } = await fetchData(formData);
 
       if (error) {
-        toast.error(error?.message, {
+        toast.error(error, {
           position: "top-right",
         });
         return;
