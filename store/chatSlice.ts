@@ -1,15 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import profile from "../public/profile.jpeg";
 import { StaticImageData } from "next/image";
+import { Contacts } from "@/type/user";
 
 interface LastMessage {
-  userId?: number;
+  userId?: string;
   message: string;
   time: Date;
 }
 
 interface User {
-  id: number;
+  id: string;
   username: string;
   bio: string;
   avatar: StaticImageData | string | null;
@@ -18,37 +18,38 @@ interface User {
   lastMessage?: LastMessage;
   unreadChat: boolean;
 }
+
 interface UserState {
-  user?: User[];
+  user: User[];
+  contacts: Contacts[];
 }
 
 const initialState: UserState = {
   user: [],
+  contacts: [],
 };
+
 const chatSlice = createSlice({
   name: "chats",
   initialState,
   reducers: {
-    setChats: (state, action: PayloadAction<Partial<User>>) => {
-      state = { ...state, ...action.payload };
+    setChats: (state, action: PayloadAction<User[]>) => {
+      state.user = action.payload;
     },
-    setLastMessage: (state, action: PayloadAction<Partial<LastMessage>>) => {
-      const { payload } = action;
-      state.user?.filter((user) => {
-        if (user.id == payload.userId) {
-          if (payload.message && payload.time) {
-            user["lastMessage"] = {
-              message: payload.message,
-              time: payload.time,
-            };
-          }
-        }
-      });
+    setLastMessage: (state, action: PayloadAction<LastMessage>) => {
+      const { userId, message, time } = action.payload;
+      const user = state.user.find((user) => user.id === userId);
+      if (user) {
+        user.lastMessage = { message, time };
+      }
+    },
+    setAllContacts: (state, action: PayloadAction<Contacts[]>) => {
+      state.contacts = action.payload;
     },
   },
 });
 
-export const { setChats, setLastMessage } = chatSlice.actions;
+export const { setChats, setLastMessage, setAllContacts } = chatSlice.actions;
 
 export default chatSlice.reducer;
 

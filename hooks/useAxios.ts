@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import axios, { AxiosRequestConfig } from "axios";
 import useLocalStorage from "./useLocalStorage";
+import { BASE_URL } from "@/backend/urls";
 
 const useAxios = (
   url: string,
@@ -30,7 +31,7 @@ const useAxios = (
         }
 
         const response = await axios({
-          url,
+          url: BASE_URL + url,
           method,
           data: body,
           ...options,

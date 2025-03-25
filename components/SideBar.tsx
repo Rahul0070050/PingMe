@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, use } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
@@ -21,6 +21,7 @@ import { useAppDispatch, useAppSelector } from "@/store/hook";
 import CallHistory from "./CallHistory";
 import MyContacts from "./MyContacts";
 import { useSocket } from "@/hooks/useSocket";
+import useAxios from "@/hooks/useAxios";
 
 interface MessageData {
   message: string;
@@ -74,18 +75,6 @@ const SideBar: React.FC = () => {
   ];
 
   const { socket } = useSocket();
-
-  useEffect(() => {
-    if (!socket) return;
-    console.log("socketio");
-    // socket.on("get-messages", (msg: MessageData[]) => {
-    //   console.log("msg ", msg);
-    // });
-
-    return () => {
-      socket.off("get-messages");
-    };
-  }, []);
 
   const handleMenuToggle = () => {
     setIsMenuOpen((prev) => !prev);
