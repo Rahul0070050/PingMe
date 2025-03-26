@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import useLocalStorage from "./useLocalStorage";
-import { BASE_URL } from "@/backend/urls";
+import { useRouter } from "next/navigation";
 
 const useAxios = (
   url: string,
@@ -11,8 +11,7 @@ const useAxios = (
   const [data, setData] = useState(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  // ✅ Ensure token is always a string or undefined
+  const navigate = useRouter();
   const [token] = useLocalStorage<string | undefined>("token", undefined);
 
   const fetchData = useCallback(
@@ -31,7 +30,7 @@ const useAxios = (
         }
 
         const response = await axios({
-          url: BASE_URL + url,
+          url,
           method,
           data: body,
           ...options,
@@ -42,6 +41,11 @@ const useAxios = (
         return { data: response.data, error: null };
       } catch (error: any) {
         console.error("API request failed:", error);
+        if (error instanceof AxiosError) {
+          if (error.response?.data.message === "jwt expired") {
+            navigate.push("/login");
+          }
+        }
 
         let errorMsg = "Something went wrong";
         if (axios.isAxiosError(error)) {

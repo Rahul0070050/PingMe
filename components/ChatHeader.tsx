@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { CircleArrowLeft, EllipsisVertical, Phone, Video } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { openSideBar, toggleUserInfo } from "@/store/userSlice";
+import UserAvatar from "./UserAvatar";
 
 const ChatHeader: React.FC = () => {
-  const { avatar, username } = useAppSelector((state) => state.user);
+  const { selectedUser } = useAppSelector((state) => state.chat);
   const dispatch = useAppDispatch();
 
   const handleToggleUserInfo = () => {
@@ -25,29 +25,18 @@ const ChatHeader: React.FC = () => {
           className="flex items-center gap-2 sm:gap-3 cursor-pointer hover:bg-gray-100 p-1 sm:p-2 rounded-lg transition-all duration-200"
           onClick={handleToggleUserInfo}
           role="button"
-          aria-label={`View profile of ${username || "user"}`}
+          aria-label={`View profile of ${selectedUser.username}`}
         >
-          {avatar ? (
-            <Image
-              className="rounded-full border border-gray-200 shadow-sm"
-              width={36} // Reduced for mobile
-              height={36}
-              src={avatar}
-              alt={`${username || "User"}'s profile picture`}
-              priority
-              sizes="(max-width: 640px) 36px, 45px" // Responsive image sizing
-            />
-          ) : (
-            <div className="flex items-center justify-center w-9 h-9 sm:w-12 sm:h-12 bg-indigo-100 rounded-full text-indigo-600 font-semibold text-lg sm:text-xl shadow-sm">
-              {username ? username[0].toUpperCase() : "?"}
-            </div>
-          )}
+          <UserAvatar
+            name={selectedUser.username}
+            profileUrl={selectedUser.profile}
+          />
           <div className="leading-tight">
             <h5 className="font-semibold text-gray-900 text-base sm:text-lg truncate max-w-[120px] sm:max-w-[200px]">
-              {username || "Alice"}
+              {selectedUser.username}
             </h5>
             <span className="text-xs sm:text-sm text-gray-500 hidden sm:block">
-              Last seen at 14:11 PM
+              Last seen at {selectedUser.lastSeen}
             </span>
           </div>
         </div>

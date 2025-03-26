@@ -7,7 +7,7 @@ interface UserState {
   id: number;
   username: string;
   bio: string;
-  avatar: StaticImageData | string | null;
+  avatar: string;
   email?: string;
   phone?: string;
   openUserInfo: boolean;
@@ -15,20 +15,22 @@ interface UserState {
   openSettings: boolean;
   openStartNewChat: boolean;
   showSideBar: boolean;
+  lastSeen: string;
 }
 
 const initialState: UserState = {
   id: 1,
-  username: "Rahul O R",
-  bio: "Web Developer",
-  avatar: profile,
-  email: "rahul@example.com",
-  phone: "144536465",
+  username: "",
+  bio: "",
+  avatar: "",
+  email: "",
+  phone: "",
   openUserInfo: false,
   openUserSettings: false,
   openSettings: false,
   openStartNewChat: false,
   showSideBar: true,
+  lastSeen: "",
 };
 const userSlice = createSlice({
   name: "user",
@@ -43,7 +45,7 @@ const userSlice = createSlice({
         id: -1,
         username: "",
         bio: "",
-        avatar: null,
+        avatar: "",
         email: "",
         openUserInfo: false,
         openUserSettings: false,

@@ -51,7 +51,7 @@ export default function LoginPage() {
         return;
       }
       setToken(data.data.token);
-      toast.success("Successfuly Loged In", { 
+      toast.success("Successfuly Loged In", {
         position: "top-right",
       });
       navigate.push("/chat");
@@ -61,7 +61,6 @@ export default function LoginPage() {
           position: "top-right",
         });
       }
-      console.log(err);
       setErrors((prev) => ({
         ...prev,
         submit: "Login failed. Please try again.",

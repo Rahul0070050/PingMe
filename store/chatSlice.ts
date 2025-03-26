@@ -8,6 +8,14 @@ interface LastMessage {
   time: Date;
 }
 
+interface SelectedUser {
+  username: string;
+  lastSeen: string;
+  profile: string;
+  socketId: string;
+  userId: string;
+}
+
 interface User {
   id: string;
   username: string;
@@ -22,11 +30,19 @@ interface User {
 interface UserState {
   user: User[];
   contacts: Contacts[];
+  selectedUser: SelectedUser;
 }
 
 const initialState: UserState = {
   user: [],
   contacts: [],
+  selectedUser: {
+    username: "",
+    lastSeen: "",
+    profile: "",
+    socketId: "",
+    userId: "",
+  },
 };
 
 const chatSlice = createSlice({
@@ -46,10 +62,21 @@ const chatSlice = createSlice({
     setAllContacts: (state, action: PayloadAction<Contacts[]>) => {
       state.contacts = action.payload;
     },
+    setSelectedUser: (state, action: PayloadAction<SelectedUser>) => {
+      const { payload } = action;
+      state.selectedUser = {
+        username: payload.username,
+        lastSeen: payload.lastSeen,
+        profile: payload.profile,
+        socketId: payload.socketId,
+        userId: payload.userId,
+      };
+    },
   },
 });
 
-export const { setChats, setLastMessage, setAllContacts } = chatSlice.actions;
+export const { setChats, setLastMessage, setAllContacts, setSelectedUser } =
+  chatSlice.actions;
 
 export default chatSlice.reducer;
 

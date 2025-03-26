@@ -7,18 +7,26 @@ import UserSettings from "@/components/UserSettings";
 import Settings from "@/components/Settings";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hook";
-import React from "react";
+import React, { useEffect } from "react";
 import StartNewChat from "@/components/StartNewChat";
 import PrivateRoute from "@/components/PrivetRoute";
+import ChatStartView from "@/components/ChatStatingView";
 
 const ChatPage = () => {
   const {
-    openUserInfo,
-    openUserSettings,
-    openSettings,
-    openStartNewChat,
-    showSideBar,
-  } = useAppSelector((state) => state.user);
+    user: {
+      openUserInfo,
+      openUserSettings,
+      openSettings,
+      openStartNewChat,
+      showSideBar,
+    },
+    chat: { selectedUser },
+  } = useAppSelector((state) => state);
+  // const {} = useAppSelector((state) => state.);
+  useEffect(() => {
+    console.log("selectedUser ", selectedUser);
+  }, []);
 
   return (
     <PrivateRoute redirectPath="/login">
@@ -43,7 +51,17 @@ const ChatPage = () => {
               showSideBar ? "max-md:hidden" : ""
             )}
           >
-            {openSettings ? <Settings /> : <ChatWindow />}
+            {openSettings ? (
+              <Settings />
+            ) : (
+              <>
+                {selectedUser.username.length > 0 ? (
+                  <ChatWindow />
+                ) : (
+                  <ChatStartView />
+                )}
+              </>
+            )}
           </div>
           {openUserInfo && (
             <div className="col-span-12 md:col-span-7 xl:col-span-3 h-full md:h-[calc(100vh-2rem)] transition-all duration-300 bg-white border-t md:border-t-0 md:border-l relative">
