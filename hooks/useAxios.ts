@@ -12,7 +12,10 @@ const useAxios = (
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useRouter();
-  const [token] = useLocalStorage<string | undefined>("token", undefined);
+  const { value: token } = useLocalStorage<string | undefined>(
+    "token",
+    undefined
+  );
 
   const fetchData = useCallback(
     async (body: any = null) => {

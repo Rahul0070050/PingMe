@@ -7,7 +7,7 @@ import UserSettings from "@/components/UserSettings";
 import Settings from "@/components/Settings";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hook";
-import React, { useEffect } from "react";
+import React from "react";
 import StartNewChat from "@/components/StartNewChat";
 import PrivateRoute from "@/components/PrivetRoute";
 import ChatStartView from "@/components/ChatStatingView";
@@ -23,10 +23,9 @@ const ChatPage = () => {
     },
     chat: { selectedUser },
   } = useAppSelector((state) => state);
-  // const {} = useAppSelector((state) => state.);
-  useEffect(() => {
-    console.log("selectedUser ", selectedUser);
-  }, []);
+  // useEffect(() => {
+  //   console.log("selectedUser ", selectedUser);
+  // }, []);
 
   return (
     <PrivateRoute redirectPath="/login">
@@ -56,7 +55,7 @@ const ChatPage = () => {
             ) : (
               <>
                 {selectedUser.username.length > 0 ? (
-                  <ChatWindow />
+                  <ChatWindow key={selectedUser.userId} />
                 ) : (
                   <ChatStartView />
                 )}

@@ -142,7 +142,7 @@ const callHistory = [
 ];
 
 const CallHistory = () => {
-  const id = useAppSelector((state) => state.user.id);
+  const id = Number(useAppSelector((state) => state.user.id));
   return (
     <div className="p-3 h-[calc(100vh-10vh-73px)] overflow-auto">
       {callHistory.map((call) => (

@@ -1,12 +1,7 @@
 "use client";
+import { BASE_SOCKET_URL } from "@/backend/urls";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import React, {
-  createContext,
-  useEffect,
-  useRef,
-  useState,
-  useContext,
-} from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 interface SocketContextType {
@@ -22,15 +17,16 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const isConnected = useRef(false);
-  const [token] = useLocalStorage("token");
+  const { value: token } = useLocalStorage("token");
 
   useEffect(() => {
-    if (!isConnected.current) {
+    if (!isConnected.current && token) {
       console.log("Socket connecting...");
-      const newSocket = io(
-        process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001/user",
-        { transports: ["websocket"], reconnection: true, auth: { token } }
-      );
+      const newSocket = io(BASE_SOCKET_URL || "http://localhost:3001/user", {
+        transports: ["websocket"],
+        reconnection: true,
+        auth: { token },
+      });
       setSocket(newSocket);
       isConnected.current = true;
 
@@ -40,7 +36,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
         isConnected.current = false;
       };
     }
-  }, []);
+  }, [token]); // Added 'token' as a dependency
 
   if (!socket) return null; // Prevent rendering child components until socket is ready
 

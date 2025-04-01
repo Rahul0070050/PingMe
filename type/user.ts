@@ -3,4 +3,5 @@ export interface Contacts {
   username: string;
   bio: string;
   profile: string;
+  lastSeen: string;
 }

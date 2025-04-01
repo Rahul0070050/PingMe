@@ -36,7 +36,19 @@ const ChatHeader: React.FC = () => {
               {selectedUser.username}
             </h5>
             <span className="text-xs sm:text-sm text-gray-500 hidden sm:block">
-              Last seen at {selectedUser.lastSeen}
+              {!selectedUser.loading ? (
+                <>
+                  {selectedUser.socketId ? (
+                    <span>online</span>
+                  ) : (
+                    <>Last seen at {selectedUser.lastSeen}</>
+                  )}
+                </>
+              ) : (
+                <>
+                  <span className="w-5 h-5 animate-ping">Loading...</span>
+                </>
+              )}
             </span>
           </div>
         </div>

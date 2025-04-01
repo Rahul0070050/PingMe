@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, use } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import {
@@ -16,22 +16,21 @@ import {
 } from "lucide-react";
 import ChatList from "./ChatList";
 import profile from "../public/profile.jpeg";
-import { toggleSettings, toggleStartANewChat } from "@/store/userSlice";
+import {
+  setUser,
+  toggleSettings,
+  toggleStartANewChat,
+} from "@/store/userSlice";
 import { useAppDispatch, useAppSelector } from "@/store/hook";
 import CallHistory from "./CallHistory";
 import MyContacts from "./MyContacts";
-import { useSocket } from "@/hooks/useSocket";
-import useAxios from "@/hooks/useAxios";
-
-interface MessageData {
-  message: string;
-  sender: number;
-  date: string;
-}
+import { jwtDecode } from "jwt-decode";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const SideBar: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { openSettings } = useAppSelector((state) => state.user);
+  const { value: token } = useLocalStorage("token");
+  const { openSettings, username } = useAppSelector((state) => state.user);
   const [selectedTab, setSelectedTab] = useState<
     "messages" | "calls" | "contacts"
   >("messages");
@@ -44,16 +43,16 @@ const SideBar: React.FC = () => {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+    if (token) {
+      const { id, username, email, phone } = jwtDecode<{
+        id: string;
+        username: string;
+        email: string;
+        phone: string;
+      }>(token as string);
+      dispatch(setUser({ id, username, email, phone }));
+    }
+  }, [dispatch, token]);
 
   const menuOptions = [
     {
@@ -74,7 +73,20 @@ const SideBar: React.FC = () => {
     { icon: LogOut, label: "Logout", action: () => console.log("Logout") },
   ];
 
-  const { socket } = useSocket();
+  useEffect(() => {
+    const {
+      id,
+      username,
+      email,
+      phone,
+    }: {
+      id: string;
+      username: string;
+      email: string;
+      phone: string;
+    } = jwtDecode(token as string);
+    dispatch(setUser({ id, username, email, phone }));
+  }, []);
 
   const handleMenuToggle = () => {
     setIsMenuOpen((prev) => !prev);
@@ -92,7 +104,7 @@ const SideBar: React.FC = () => {
             priority
           />
           <div className="leading-tight">
-            <h5 className="font-semibold text-gray-900">Rahul O R</h5>
+            <h5 className="font-semibold text-gray-900">{username}</h5>
           </div>
         </div>
         <div className="flex gap-2 relative">

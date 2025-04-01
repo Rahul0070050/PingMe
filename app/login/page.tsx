@@ -1,25 +1,21 @@
 "use client";
 
-import { USER_LOGIN_URL } from "@/backend/urls";
-import useAxios from "@/hooks/useAxios";
 import useFormValidation from "@/hooks/useFormValidation";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { useLoginMutation } from "@/store/service/api/apiSlice";
 import { validationRules } from "@/utils/formValidationRules";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState, FormEvent, ChangeEvent } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
-  const [token, setToken] = useLocalStorage("token", null);
+  const { setValue } = useLocalStorage<string>("token");
 
-  const navigate = useRouter();
-  const { loading, fetchData } = useAxios(USER_LOGIN_URL, "POST");
-
+  const [login, { isLoading, isError }] = useLoginMutation();
   const { errors, setErrors, validateField, validateForm } = useFormValidation(
     formData,
     validationRules
@@ -40,31 +36,21 @@ export default function LoginPage() {
     if (!validateForm(formData)) {
       return;
     }
+    const { username, password } = formData;
 
     try {
-      const { data, error } = await fetchData(formData);
-
-      if (error) {
-        toast.error(error, {
-          position: "top-right",
-        });
-        return;
-      }
-      setToken(data.data.token);
-      toast.success("Successfuly Loged In", {
-        position: "top-right",
-      });
-      navigate.push("/chat");
+      const response = await login({ username, password }).unwrap();
+      setValue(response.data.token);
+      window.location.href = "/chat";
     } catch (err) {
-      if (err instanceof Error) {
-        toast.error(err?.message, {
-          position: "top-right",
-        });
+      if (isError && err instanceof Error) {
+        setErrors((prev) => ({
+          ...prev,
+          submit:
+            (err as { data?: { message?: string } })?.data?.message ||
+            "Login failed. Please try again.",
+        }));
       }
-      setErrors((prev) => ({
-        ...prev,
-        submit: "Login failed. Please try again.",
-      }));
     }
   };
 
@@ -160,12 +146,12 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={isLoading}
             className={`w-full py-3 px-4 bg-indigo-600 text-white rounded-lg font-semibold shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 flex items-center justify-center ${
-              loading ? "opacity-70 cursor-not-allowed" : ""
+              isLoading ? "opacity-70 cursor-not-allowed" : ""
             }`}
           >
-            {loading ? (
+            {isLoading ? (
               <>
                 <svg
                   className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"

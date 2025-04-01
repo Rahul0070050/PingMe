@@ -4,7 +4,7 @@ import { StaticImageData } from "next/image";
 import { Socket } from "socket.io-client";
 
 interface UserState {
-  id: number;
+  id: string;
   username: string;
   bio: string;
   avatar: string;
@@ -19,7 +19,7 @@ interface UserState {
 }
 
 const initialState: UserState = {
-  id: 1,
+  id: "",
   username: "",
   bio: "",
   avatar: "",
@@ -42,7 +42,7 @@ const userSlice = createSlice({
     removeUser: (state) => {
       return {
         ...initialState,
-        id: -1,
+        id: "",
         username: "",
         bio: "",
         avatar: "",

@@ -14,6 +14,7 @@ interface SelectedUser {
   profile: string;
   socketId: string;
   userId: string;
+  loading: boolean;
 }
 
 interface User {
@@ -42,6 +43,7 @@ const initialState: UserState = {
     profile: "",
     socketId: "",
     userId: "",
+    loading: false,
   },
 };
 
@@ -70,13 +72,46 @@ const chatSlice = createSlice({
         profile: payload.profile,
         socketId: payload.socketId,
         userId: payload.userId,
+        loading: true,
+      };
+    },
+    setSelectedUserLoading: (
+      state,
+      action: PayloadAction<{ loading: boolean }>
+    ) => {
+      state.selectedUser.loading = action.payload.loading;
+    },
+    setSelectedUserSocketId: (
+      state,
+      action: PayloadAction<{ userClientId: string }>
+    ) => {
+      const { payload } = action;
+      state.selectedUser = {
+        ...state.selectedUser,
+        socketId: payload.userClientId,
+        lastSeen: "",
+      };
+    },
+    setLastSeen: (state, action: PayloadAction<{ lastSeen: string }>) => {
+      const { payload } = action;
+      state.selectedUser = {
+        ...state.selectedUser,
+        lastSeen: payload.lastSeen,
+        socketId: "",
       };
     },
   },
 });
 
-export const { setChats, setLastMessage, setAllContacts, setSelectedUser } =
-  chatSlice.actions;
+export const {
+  setChats,
+  setLastMessage,
+  setAllContacts,
+  setSelectedUser,
+  setSelectedUserSocketId,
+  setLastSeen,
+  setSelectedUserLoading,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;
 

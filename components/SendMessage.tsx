@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FormEvent, useEffect } from "react";
+import React, { useState, FormEvent } from "react";
 import {
   Camera,
   Mic,
@@ -8,7 +8,6 @@ import {
   SendHorizontal,
   SmileIcon,
 } from "lucide-react";
-import { useSocket } from "@/hooks/useSocket";
 
 const SendMessage = ({
   handleSendMessage,

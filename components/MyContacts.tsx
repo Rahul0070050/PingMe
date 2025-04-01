@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
-import { openSideBar } from "@/store/userSlice";
-import { useAppDispatch } from "@/store/hook";
+import { closeSideBar } from "@/store/userSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hook";
 import { Contacts } from "@/type/user";
 import UserAvatar from "./UserAvatar";
 import { setAllContacts, setSelectedUser } from "@/store/chatSlice";
@@ -9,19 +9,34 @@ import { useGetUsersQuery } from "@/store/service/api/apiSlice";
 
 const MyContacts = () => {
   const dispatch = useAppDispatch();
-  const { error, data: contacts, isLoading } = useGetUsersQuery();
+  const { data: contacts, isLoading } = useGetUsersQuery();
   useEffect(() => {
     if (Array.isArray(contacts)) {
       const AllContacts = contacts as Contacts[];
       dispatch(setAllContacts(AllContacts));
     }
   }, [contacts]);
+  const { userId: id } = useAppSelector((state) => state.chat.selectedUser);
 
-  function handleClick(username: string, profile: string, userId: string) {
-    dispatch(
-      setSelectedUser({ lastSeen: "", username, profile, socketId: "", userId })
-    );
-    dispatch(openSideBar());
+  function handleClick(
+    username: string,
+    profile: string,
+    userId: string,
+    lastSeen: string
+  ) {
+    if (userId != id) {
+      dispatch(
+        setSelectedUser({
+          lastSeen,
+          username,
+          profile,
+          socketId: "",
+          userId,
+          loading: true,
+        })
+      );
+    }
+    dispatch(closeSideBar());
   }
 
   return (
@@ -33,7 +48,9 @@ const MyContacts = () => {
           <div
             key={user.id}
             className="flex items-center gap-2 p-2 hover:bg-slate-100 cursor-pointer"
-            onClick={() => handleClick(user.username, user.profile, user.id)}
+            onClick={() =>
+              handleClick(user.username, user.profile, user.id, user.lastSeen)
+            }
           >
             <UserAvatar name={user.username} profileUrl={user.profile} />
             <div className="">

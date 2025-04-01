@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image, { StaticImageData } from "next/image";  
+import Image, { StaticImageData } from "next/image";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import Link from "next/link";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -15,10 +15,11 @@ interface User {
 }
 
 export default function Dashboard() {
-  const [user, setUser, removeUser] = useLocalStorage<User | null>(
-    "user",
-    null
-  );
+  const {
+    value: user,
+    setValue: setUser,
+    removeValue: removeUser,
+  } = useLocalStorage<User | null>("user", null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {

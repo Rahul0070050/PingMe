@@ -18,7 +18,7 @@ const PrivateRoute = ({
   loadingMessage = "Verifying access...",
 }: PrivateRouteProps) => {
   const router = useRouter();
-  const [token, , removeToken] = useLocalStorage<string>("token", null);
+  const { value: token } = useLocalStorage<string>("token", null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {

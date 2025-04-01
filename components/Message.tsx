@@ -6,16 +6,15 @@ import React from "react";
 import moment from "moment";
 
 interface MessageProps {
-  message: {
-    message: string;
-    sender: number;
-    date: string;
-  };
+  message: string;
+  date: Date;
+  receiverId: string;
+  senderId: string;
 }
 
-const Message: React.FC<MessageProps> = ({ message }) => {
+const Message = ({ message }: { message: MessageProps }) => {
   const { id } = useAppSelector((state) => state.user);
-  const isOwnMessage = id === message.sender;
+  const isOwnMessage = id === message.senderId;
 
   return (
     <div

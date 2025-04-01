@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const colors = [
   "#1E88E5",
   "#1565C0",
@@ -9,9 +11,8 @@ const colors = [
   "#3949AB",
 ];
 
-// Generate a stable color based on the user's name
 const getStableColor = (name: string) => {
-  if (!name) return "#CCCCCC"; // Default gray for missing names
+  if (!name) return "#CCCCCC";
   const charCodeSum = name
     .split("")
     .reduce((sum, char) => sum + char.charCodeAt(0), 0);
@@ -27,10 +28,12 @@ const UserAvatar = ({
 }) => {
   if (profileUrl) {
     return (
-      <img
+      <Image
         src={profileUrl}
         alt={name}
-        className="w-10 h-10 rounded-full object-cover"
+        width={40}
+        height={40}
+        className="rounded-full object-cover"
       />
     );
   }

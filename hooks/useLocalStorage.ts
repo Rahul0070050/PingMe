@@ -7,21 +7,20 @@ type StorageValue<T> = T | null;
 function useLocalStorage<T>(
   key: string,
   initialValue: T | (() => T) | null = null
-): [
-  StorageValue<T>,
-  (value: T | ((prev: StorageValue<T>) => T)) => void,
-  () => void
-] {
+): {
+  value: StorageValue<T>;
+  setValue: (value: T | ((prev: StorageValue<T>) => T)) => void;
+  removeValue: () => void;
+} {
   const [storedValue, setStoredValue] = useState<StorageValue<T>>(() => {
     if (typeof window === "undefined") {
-      if (initialValue === null) return null;
       return initialValue instanceof Function ? initialValue() : initialValue;
     }
 
     try {
       const item = window.localStorage.getItem(key);
       return item
-        ? JSON.parse(item)
+        ? (JSON.parse(item) as T)
         : initialValue instanceof Function
         ? initialValue()
         : initialValue;
@@ -30,11 +29,13 @@ function useLocalStorage<T>(
       return initialValue instanceof Function ? initialValue() : initialValue;
     }
   });
+
   const setValue = useCallback(
     (value: T | ((prev: StorageValue<T>) => T)) => {
       try {
+        // Ensure correct type inference
         const valueToStore =
-          value instanceof Function ? value(storedValue) : value;
+          value instanceof Function ? value(storedValue) : (value as T);
 
         setStoredValue(valueToStore);
 
@@ -53,6 +54,7 @@ function useLocalStorage<T>(
     },
     [key, storedValue]
   );
+
   const removeValue = useCallback(() => {
     try {
       setStoredValue(null);
@@ -69,6 +71,7 @@ function useLocalStorage<T>(
       console.error(`Error removing localStorage key "${key}":`, error);
     }
   }, [key]);
+
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === key) {
@@ -85,7 +88,7 @@ function useLocalStorage<T>(
     return () => window.removeEventListener("storage", handleStorageChange);
   }, [key]);
 
-  return [storedValue, setValue, removeValue];
+  return { value: storedValue, setValue, removeValue };
 }
 
 export default useLocalStorage;
