@@ -73,21 +73,6 @@ const SideBar: React.FC = () => {
     { icon: LogOut, label: "Logout", action: () => console.log("Logout") },
   ];
 
-  useEffect(() => {
-    const {
-      id,
-      username,
-      email,
-      phone,
-    }: {
-      id: string;
-      username: string;
-      email: string;
-      phone: string;
-    } = jwtDecode(token as string);
-    dispatch(setUser({ id, username, email, phone }));
-  }, []);
-
   const handleMenuToggle = () => {
     setIsMenuOpen((prev) => !prev);
   };

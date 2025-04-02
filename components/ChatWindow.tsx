@@ -126,7 +126,7 @@ const ChatWindow: React.FC = () => {
     return () => {
       observerRef.current?.disconnect();
     };
-  }, [topRef.current, selectedUserId, loadMoreMessages]);
+  }, [selectedUserId, loadMoreMessages]);
 
   function scrollToBottom() {
     if (scrollRef.current) {

@@ -15,7 +15,7 @@ const MyContacts = () => {
       const AllContacts = contacts as Contacts[];
       dispatch(setAllContacts(AllContacts));
     }
-  }, [contacts]);
+  }, [contacts, dispatch]);
   const { userId: id } = useAppSelector((state) => state.chat.selectedUser);
 
   function handleClick(
