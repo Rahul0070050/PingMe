@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 export default function NotFound() {
@@ -24,12 +25,12 @@ export default function NotFound() {
           It looks like you’re lost in the clouds. The page you’re looking for
           doesn’t exist or has been moved.
         </p>
-        <a
+        <Link
           href="/"
           className="inline-block px-6 py-3 bg-indigo-200 text-indigo-800 font-medium rounded-lg hover:bg-indigo-300 transition-colors"
         >
           Back to Home
-        </a>
+        </Link>
       </div>
     </div>
   );
