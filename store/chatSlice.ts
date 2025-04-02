@@ -1,3 +1,5 @@
+"use client";
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { StaticImageData } from "next/image";
 import { Contacts } from "@/type/user";
