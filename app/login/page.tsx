@@ -43,7 +43,7 @@ export default function LoginPage() {
     try {
       const response = await login({ username, password }).unwrap();
       setValue(response.data.token);
-      navigate.push("/chat");
+      window.location.href = "/chat";
     } catch (err) {
       if (isError && err instanceof Error) {
         setErrors((prev) => ({
