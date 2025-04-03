@@ -10,13 +10,13 @@ import { useGetUsersQuery } from "@/store/service/api/apiSlice";
 const MyContacts = () => {
   const dispatch = useAppDispatch();
   const { data: contacts, isLoading } = useGetUsersQuery();
+  const { userId: id } = useAppSelector((state) => state.chat.selectedUser);
   useEffect(() => {
     if (Array.isArray(contacts)) {
       const AllContacts = contacts as Contacts[];
       dispatch(setAllContacts(AllContacts));
     }
   }, [contacts, dispatch]);
-  const { userId: id } = useAppSelector((state) => state.chat.selectedUser);
 
   function handleClick(
     username: string,

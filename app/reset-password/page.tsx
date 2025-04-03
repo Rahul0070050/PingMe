@@ -1,5 +1,5 @@
 "use client";
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, FormEvent, ChangeEvent, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import InputField from "@/components/InputField";
 import SubmitButton from "@/components/SubmitButton";
@@ -16,7 +16,7 @@ interface Errors {
   submit?: string;
 }
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
 
@@ -71,23 +71,16 @@ export default function ResetPasswordPage() {
     if (validateForm()) {
       try {
         console.log("Resetting password with:", { token, ...formData });
-        // Add your password reset logic here
-        // Example: await resetPassword(token, formData.password);
         setErrors({
           submit: "Password reset successfully. Redirecting to login...",
         });
-        // Optionally redirect after a delay
         setTimeout(() => (window.location.href = "/login"), 2000);
       } catch (error) {
         if (error instanceof Error) {
-          setErrors({
-            submit: error.message,
-          });
+          setErrors({ submit: error.message });
           return;
         }
-        setErrors({
-          submit: "Failed to reset password. Please try again." + error,
-        });
+        setErrors({ submit: "Failed to reset password. Please try again." });
       }
     }
     setIsSubmitting(false);
@@ -96,19 +89,15 @@ export default function ResetPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-8 transform transition-all hover:shadow-2xl">
-        {/* Header */}
         <div className="text-center space-y-4">
-          <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-              Reset Password
-            </h1>
-            <p className="mt-2 text-sm text-gray-600">
-              Enter your new password below
-            </p>
-          </div>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Reset Password
+          </h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Enter your new password below
+          </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <InputField
             label="New Password"
@@ -155,5 +144,13 @@ export default function ResetPasswordPage() {
         <FormFooter text="Back to" linkText="Sign in" linkHref="/login" />
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordContent />
+    </Suspense>
   );
 }

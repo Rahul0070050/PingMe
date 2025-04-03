@@ -16,7 +16,6 @@ const ChatHeader: React.FC = () => {
 
   return (
     <div className="flex items-center justify-between px-2 sm:px-4 py-2 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white shadow-sm w-full">
-      {/* User Info Section */}
       <div className="flex items-center">
         <div className="px-1 md:hidden" onClick={() => dispatch(openSideBar())}>
           <CircleArrowLeft />

@@ -1,4 +1,4 @@
-// components/LoadingScreen.tsx
+"use client";
 import React from "react";
 
 interface LoadingScreenProps {

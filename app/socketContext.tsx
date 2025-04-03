@@ -20,28 +20,35 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const { value: token } = useLocalStorage("token");
 
   useEffect(() => {
-    if (!isConnected.current && token) {
+    if (token) {
       console.log("Socket connecting...");
       const newSocket = io(BASE_SOCKET_URL || "http://localhost:3001/user", {
         transports: ["websocket"],
         reconnection: true,
         auth: { token },
       });
+
       setSocket(newSocket);
       isConnected.current = true;
 
-      return () => {
-        console.log("Socket disconnecting...");
-        newSocket.disconnect();
+      newSocket.on("connect", () => {
+        console.log("Socket connected:", newSocket.id);
+      });
+
+      newSocket.on("disconnect", () => {
+        console.log("Socket disconnected");
         isConnected.current = false;
+      });
+
+      return () => {
+        console.log("Cleaning up socket...");
+        newSocket.disconnect();
       };
     }
-  }, [token]); // Added 'token' as a dependency
-
-  if (!socket) return null; // Prevent rendering child components until socket is ready
+  }, [token]);
 
   return (
-    <SocketContext.Provider value={{ socket }}>
+    <SocketContext.Provider value={{ socket: socket ? socket : null }}>
       {children}
     </SocketContext.Provider>
   );
