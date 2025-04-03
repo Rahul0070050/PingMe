@@ -1,4 +1,3 @@
-// components/PrivateRoute.tsx
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -46,7 +45,7 @@ const PrivateRoute = ({
   }
 
   if (!token) {
-    return null;
+    router.push("/");
   }
 
   return <>{children}</>;
