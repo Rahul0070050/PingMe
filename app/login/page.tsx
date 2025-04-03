@@ -5,6 +5,7 @@ import useLocalStorage from "@/hooks/useLocalStorage";
 import { useLoginMutation } from "@/store/service/api/apiSlice";
 import { validationRules } from "@/utils/formValidationRules";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, FormEvent, ChangeEvent } from "react";
 import { Toaster } from "react-hot-toast";
 
@@ -15,6 +16,7 @@ export default function LoginPage() {
   });
   const { setValue } = useLocalStorage<string>("token");
 
+  const navigate = useRouter();
   const [login, { isLoading, isError }] = useLoginMutation();
   const { errors, setErrors, validateField, validateForm } = useFormValidation(
     formData,
@@ -41,16 +43,19 @@ export default function LoginPage() {
     try {
       const response = await login({ username, password }).unwrap();
       setValue(response.data.token);
-      window.location.href = "/chat";
-    } catch (err) {
+      navigate.push("/chat");
+    } catch (err: any) {
       if (isError && err instanceof Error) {
         setErrors((prev) => ({
           ...prev,
-          submit:
-            (err as { data?: { message?: string } })?.data?.message ||
-            "Login failed. Please try again.",
+          submit: err.message,
         }));
+        return;
       }
+      setErrors((prev) => ({
+        ...prev,
+        submit: err?.data?.message || "Login failed. Please try again.",
+      }));
     }
   };
 

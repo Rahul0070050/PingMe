@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Roboto_Mono } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import { SocketProvider } from "./socketContext";
 
-const inter = Inter({
-  variable: "--font-inter",
+const roboto = Roboto({
+  variable: "--font-poppins",
   subsets: ["latin"],
-});
-
-const mono = Roboto_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${mono.variable} antialiased`}>
+      <body className={`${roboto.className} antialiased`}>
         <StoreProvider>
           <SocketProvider>{children}</SocketProvider>
         </StoreProvider>
