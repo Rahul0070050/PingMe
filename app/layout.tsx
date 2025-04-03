@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
-import { SocketProvider } from "./socketContext";
 
 const roboto = Roboto({
   variable: "--font-poppins",
@@ -23,9 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${roboto.className} antialiased`}>
-        <StoreProvider>
-          <SocketProvider>{children}</SocketProvider>
-        </StoreProvider>
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
   );
