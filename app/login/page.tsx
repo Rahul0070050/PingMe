@@ -44,18 +44,30 @@ export default function LoginPage() {
       const response = await login({ username, password }).unwrap();
       setValue(response.data.token);
       navigate.push("/chat");
-    } catch (err: any) {
-      if (isError && err instanceof Error) {
+    } catch (err) {
+      if (err instanceof Error) {
         setErrors((prev) => ({
           ...prev,
           submit: err.message,
         }));
-        return;
+      } else if (
+        err &&
+        typeof err === "object" &&
+        "data" in err &&
+        err.data &&
+        typeof err.data === "object" &&
+        "message" in err.data
+      ) {
+        setErrors((prev) => ({
+          ...prev,
+          submit: (err as { data: { message: string } }).data.message,
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          submit: "Login failed. Please try again.",
+        }));
       }
-      setErrors((prev) => ({
-        ...prev,
-        submit: err?.data?.message || "Login failed. Please try again.",
-      }));
     }
   };
 
