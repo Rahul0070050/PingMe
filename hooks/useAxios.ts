@@ -1,3 +1,4 @@
+"use client";
 import { useState, useCallback } from "react";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import useLocalStorage from "./useLocalStorage";

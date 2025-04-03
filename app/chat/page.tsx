@@ -23,9 +23,6 @@ const ChatPage = () => {
     },
     chat: { selectedUser },
   } = useAppSelector((state) => state);
-  // useEffect(() => {
-  //   console.log("selectedUser ", selectedUser);
-  // }, []);
 
   return (
     <PrivateRoute redirectPath="/login">
