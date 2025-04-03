@@ -45,7 +45,7 @@ export default function LoginPage() {
       setValue(response.data.token);
       navigate.push("/chat");
     } catch (err) {
-      if (err instanceof Error) {
+      if (isError && err instanceof Error) {
         setErrors((prev) => ({
           ...prev,
           submit: err.message,
