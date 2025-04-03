@@ -20,6 +20,7 @@ export default function Dashboard() {
     setValue: setUser,
     removeValue: removeUser,
   } = useLocalStorage<User | null>("user", null);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {

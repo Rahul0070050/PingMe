@@ -21,31 +21,17 @@ const PrivateRoute = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const verifyAuth = async () => {
-      try {
-        if (!token) {
-          router.push(redirectPath);
-          return;
-        }
-      } catch (error) {
-        console.error("Auth verification failed:", error);
-        router.push(redirectPath);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    verifyAuth();
-  }, [router, redirectPath, token]);
+    if (!token) {
+      router.replace(redirectPath);
+    } else {
+      setIsLoading(false);
+    }
+  }, [token, router, redirectPath]);
 
   if (isLoading) {
     return (
       <LoadingScreen message={loadingMessage} size="md" color="blue-600" />
     );
-  }
-
-  if (!token) {
-    router.push("/");
   }
 
   return <>{children}</>;

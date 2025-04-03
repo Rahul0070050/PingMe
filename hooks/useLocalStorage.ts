@@ -13,14 +13,13 @@ function useLocalStorage<T>(
   removeValue: () => void;
 } {
   const [storedValue, setStoredValue] = useState<StorageValue<T>>(() => {
-    if (typeof window === "undefined") {
+    if (typeof window === "undefined")
       return initialValue instanceof Function ? initialValue() : initialValue;
-    }
 
     try {
       const item = window.localStorage.getItem(key);
       return item
-        ? (JSON.parse(item) as T)
+        ? JSON.parse(item)
         : initialValue instanceof Function
         ? initialValue()
         : initialValue;
@@ -33,20 +32,14 @@ function useLocalStorage<T>(
   const setValue = useCallback(
     (value: T | ((prev: StorageValue<T>) => T)) => {
       try {
-        // Ensure correct type inference
         const valueToStore =
-          value instanceof Function ? value(storedValue) : (value as T);
+          value instanceof Function ? value(storedValue) : value;
 
         setStoredValue(valueToStore);
 
         if (typeof window !== "undefined") {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
-          window.dispatchEvent(
-            new StorageEvent("storage", {
-              key,
-              newValue: JSON.stringify(valueToStore),
-            })
-          );
+          window.dispatchEvent(new Event("storage")); // Correct event dispatching
         }
       } catch (error) {
         console.error(`Error setting localStorage key "${key}":`, error);
@@ -60,12 +53,7 @@ function useLocalStorage<T>(
       setStoredValue(null);
       if (typeof window !== "undefined") {
         window.localStorage.removeItem(key);
-        window.dispatchEvent(
-          new StorageEvent("storage", {
-            key,
-            newValue: null,
-          })
-        );
+        window.dispatchEvent(new Event("storage")); // Correct event dispatching
       }
     } catch (error) {
       console.error(`Error removing localStorage key "${key}":`, error);
