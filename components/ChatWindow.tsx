@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
 import SendMessage from "./SendMessage";
@@ -14,10 +15,13 @@ import {
 import LoadingScreen from "./LoadingScreen";
 
 interface MessageData {
+  id: string;
   message: string;
   date: Date;
   senderId: string;
   receiverId: string;
+  loading: boolean;
+  seen: boolean;
 }
 
 interface ClientInfo {
@@ -65,12 +69,61 @@ const ChatWindow: React.FC = () => {
       limitRef.current = limitRef.current + 15;
     };
 
+    const handleEachMessage = (msg: MessageData) => {
+      setMessages((prev) => [...prev, msg]);
+      socket.emit("set-seen-messages", {
+        id: msg.id,
+        userId: selectedUserId,
+      });
+    };
+
+    const handleSeenMessage = (data: { id: string; seen: boolean }) => {
+      setMessages((prev) =>
+        prev.map((message) =>
+          message.id === data.id
+            ? { ...message, seen: data.seen, loading: false }
+            : message
+        )
+      );
+    };
+
+    const handleSetOnline = (data: {
+      id: string;
+      userClientId: string;
+      lastSeen: string;
+    }) => {
+      const { id, userClientId, lastSeen } = data;
+      if (id === selectedUserId) {
+        dispatch(setSelectedUserSocketId({ userClientId }));
+        if (lastSeen) dispatch(setLastSeen({ lastSeen }));
+      }
+    };
+
+    const handleReadMessages = (data: { selectedUserId: string }) => {
+      const { selectedUserId } = data;
+      if (selectedUserId === id) {
+        setMessages((prev) =>
+          prev.map((message) =>
+            !message.seen ? { ...message, seen: true } : message
+          )
+        );
+      }
+    };
+
+    socket.on("get-seen-messages", handleSeenMessage);
     socket.on("get-message", handleNewMessage);
+    socket.on("get-each-message", handleEachMessage);
     socket.on("get-older-messages", handleOlderMessages);
+    socket.on("set-user-status", handleSetOnline);
+    socket.on("user-read-messages", handleReadMessages);
 
     return () => {
+      socket.off("get-seen-messages", handleSeenMessage);
       socket.off("get-message", handleNewMessage);
+      socket.off("get-each-message", handleEachMessage);
       socket.off("get-older-messages", handleOlderMessages);
+      socket.off("set-user-status", handleSetOnline);
+      socket.off("user-read-messages", handleReadMessages);
     };
   }, [socket]);
 
@@ -96,19 +149,20 @@ const ChatWindow: React.FC = () => {
     );
   }, [selectedUserId, socket, dispatch]);
 
-  const loadMoreMessages = useCallback(() => {
+  const loadMoreMessages = () => {
     if (socket) {
+      setShouldScroll(false);
       socket.emit("get-older-messages", {
         selectedUserId,
         limit: limitRef.current,
       });
     }
-  }, [socket, selectedUserId]);
+  };
 
   useEffect(() => {
     if (!topRef.current || !scrollRef.current) return;
 
-    observerRef.current = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
         if (entry.isIntersecting) {
@@ -121,12 +175,12 @@ const ChatWindow: React.FC = () => {
       }
     );
 
-    observerRef.current.observe(topRef.current);
+    observer.observe(topRef.current);
 
     return () => {
-      observerRef.current?.disconnect();
+      observer.disconnect();
     };
-  }, [selectedUserId, loadMoreMessages]);
+  }, [topRef.current]);
 
   function scrollToBottom() {
     if (scrollRef.current) {
@@ -141,10 +195,13 @@ const ChatWindow: React.FC = () => {
     try {
       if (socket) {
         const newMessage: MessageData = {
+          id: uuidv4(),
           message,
           date: new Date(),
           senderId: id,
           receiverId: selectedUserId,
+          loading: true,
+          seen: false,
         };
 
         scrollToBottom();
@@ -155,6 +212,7 @@ const ChatWindow: React.FC = () => {
           message,
           receiverId: selectedUserId,
           date: new Date(),
+          id: newMessage.id,
         });
       }
     } catch (error) {
