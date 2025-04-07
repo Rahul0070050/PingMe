@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import ChatHeader from "./ChatHeader";
 import Message from "./Message";
@@ -35,7 +35,7 @@ const ChatWindow: React.FC = () => {
   const bottumRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
+  // const observerRef = useRef<IntersectionObserver | null>(null);
   const limitRef = useRef<number>(15);
 
   const {
